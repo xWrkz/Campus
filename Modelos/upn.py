@@ -151,13 +151,22 @@ def draw_scene():
     glRotatef(camera_angle_x, 1.0, 0.0, 0.0)
     glRotatef(camera_angle_y, 0.0, 1.0, 0.0)
 
-    # Dibujar suelo (el terreno de la universidad)
-    glColor3f(0.3, 0.3, 0.3)  # Color gris oscuro para el terreno
+    # Dibujar suelo inferior(el terreno del patio)
+    glColor3f(0.0, 0.0, 0.0)  # Color gris oscuro para el terreno
     glBegin(GL_QUADS)
     glVertex3f(-100.0, -0.5, -100.0)
     glVertex3f(100.0, -0.5, -100.0)
     glVertex3f(100.0, -0.5, 100.0)
     glVertex3f(-100.0, -0.5, 100.0)
+    glEnd()
+
+    # Dibujar suelo (el terreno de la universidad)
+    glColor3f(0.3, 0.3, 0.3)  # Color gris oscuro para el terreno
+    glBegin(GL_QUADS)
+    glVertex3f(-100.0, 2.5, -100.0)
+    glVertex3f(100.0, 2.5, -100.0)
+    glVertex3f(100.0, 2.5, 100.0)
+    glVertex3f(-100.0, 2.5, 100.0)
     glEnd()
 
     # Dibujar paredes del comedor con ventanas
