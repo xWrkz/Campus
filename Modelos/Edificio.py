@@ -8,29 +8,38 @@ width = 10
 depth = 8
 height = 4
 floor_height = height / 4
+corridor_width = 2
+
+def draw_floor(z):
+    # Dibuja las paredes del pasillo
+    glBegin(GL_QUADS)
+    glColor3f(0.8, 0.5, 0.2)  # Color de las paredes
+    # Pared izquierda
+    glVertex3f(-width/2, -depth/2, z)
+    glVertex3f(-width/2 + corridor_width, -depth/2, z)
+    glVertex3f(-width/2 + corridor_width, depth/2, z)
+    glVertex3f(-width/2, depth/2, z)
+    
+    # Pared derecha
+    glVertex3f(width/2, -depth/2, z)
+    glVertex3f(width/2 - corridor_width, -depth/2, z)
+    glVertex3f(width/2 - corridor_width, depth/2, z)
+    glVertex3f(width/2, depth/2, z)
+    glEnd()
+
+    # Dibuja el suelo
+    glBegin(GL_QUADS)
+    glColor3f(0.6, 0.3, 0.1)  # Color del suelo
+    glVertex3f(-width/2 + corridor_width, -depth/2, z)
+    glVertex3f(width/2 - corridor_width, -depth/2, z)
+    glVertex3f(width/2 - corridor_width, depth/2, z)
+    glVertex3f(-width/2 + corridor_width, depth/2, z)
+    glEnd()
 
 def draw_building():
-    glBegin(GL_QUADS)
-
-    # Pisos
     for i in range(4):
         z = i * floor_height
-        # Base
-        glColor3f(0.8, 0.5, 0.2)  # Color marrón
-        glVertex3f(-width/2, -depth/2, z)
-        glVertex3f(width/2, -depth/2, z)
-        glVertex3f(width/2, depth/2, z)
-        glVertex3f(-width/2, depth/2, z)
-
-    # Terraza
-    z = height
-    glColor3f(0.6, 0.3, 0.1)  # Color más claro
-    glVertex3f(-width/2, -depth/2, z)
-    glVertex3f(width/2, -depth/2, z)
-    glVertex3f(width/2, depth/2, z)
-    glVertex3f(-width/2, depth/2, z)
-
-    glEnd()
+        draw_floor(z)
 
 def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -56,7 +65,7 @@ def main():
     glutInit(sys.argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
     glutInitWindowSize(800, 600)
-    glutCreateWindow("Edificio 3D")
+    glutCreateWindow("Edificio 3D con Pasillos")
     init()
     glutDisplayFunc(display)
     glutReshapeFunc(reshape)
@@ -64,3 +73,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
