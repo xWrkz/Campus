@@ -139,6 +139,35 @@ def draw_central_patio():
         draw_bench()
         glPopMatrix()
 
+def draw_building():
+    # Color de la pared del edificio (gris claro)
+    glColor3f(0.7, 0.7, 0.7)  
+    
+    # Cuerpo del edificio
+    glPushMatrix()
+    glScalef(8.0, 10.0, 4.0)  # Tamaño del edificio
+    glutSolidCube(1)
+    glPopMatrix()
+    
+    # Dibujar ventanas en la fachada
+    glColor3f(0.3, 0.3, 0.9)  # Color de las ventanas (azul oscuro)
+    for x in [-3.0, 0.0, 3.0]:  # Posición horizontal de las ventanas
+        for y in [2.0, 4.0, 6.0]:  # Posición vertical de las ventanas
+            glPushMatrix()
+            glTranslatef(x, y, 2.05)  # Posicionar ventanas ligeramente fuera de la fachada
+            glScalef(1.5, 1.5, 0.1)  # Tamaño de las ventanas
+            glutSolidCube(1)
+            glPopMatrix()
+
+    # Puerta de entrada
+    glColor3f(0.4, 0.2, 0.1)  # Color de la puerta (marrón)
+    glPushMatrix()
+    glTranslatef(0.0, -3.5, 2.05)  # Posicionar la puerta en la parte inferior del edificio
+    glScalef(2.0, 3.0, 0.1)  # Tamaño de la puerta
+    glutSolidCube(1)
+    glPopMatrix()
+
+
 def draw_scene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
@@ -175,6 +204,12 @@ def draw_scene():
 
     # Dibujar el patio central al lado del comedor
     draw_central_patio()
+
+    # Dibujar el edificio cercano al comedor
+    glPushMatrix()
+    glTranslatef(10.0, 5.0, -30.0)  # Ubicar el edificio en la escena
+    draw_building()
+    glPopMatrix()
 
     glutSwapBuffers()
 
