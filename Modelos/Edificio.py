@@ -59,4 +59,8 @@ def main():
     glutCreateWindow("Edificio 3D")
     init()
     glutDisplayFunc(display)
-    gl
+    glutReshapeFunc(reshape)
+    glutMainLoop()
+
+if __name__ == "__main__":
+    main()
