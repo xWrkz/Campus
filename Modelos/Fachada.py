@@ -1,8 +1,12 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
+import math
 
 width, height = 800, 600
+camera_angle_x = 0  # Ángulo de rotación en el eje X
+camera_angle_y = 0  # Ángulo de rotación en el eje Y
+camera_distance = 5  # Distancia de la cámara al objeto
 
 def init():
     glClearColor(0.53, 0.81, 0.98, 1)  # Cielo azul claro
@@ -71,9 +75,18 @@ def draw_building():
     glPopMatrix()
 
 def display():
+    global camera_angle_x, camera_angle_y, camera_distance
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
-    gluLookAt(0, 1, 5, 0, 0, 0, 0, 1, 0)  # Posición de la cámara
+
+    # Calcular la posición de la cámara en base a los ángulos y la distancia
+    camera_x = camera_distance * math.sin(math.radians(camera_angle_x)) * math.cos(math.radians(camera_angle_y))
+    camera_y = camera_distance * math.sin(math.radians(camera_angle_y))
+    camera_z = camera_distance * math.cos(math.radians(camera_angle_x)) * math.cos(math.radians(camera_angle_y))
+
+    # Establecer la posición de la cámara
+    gluLookAt(camera_x, camera_y, camera_z, 0, 0, 0, 0, 1, 0)
 
     draw_building()  # Dibujar el edificio
 
@@ -87,14 +100,34 @@ def reshape(w, h):
     glMatrixMode(GL_MODELVIEW)
 
 def keyboard(key, x, y):
+    global camera_distance
     if key == b'\x1b':  # Tecla Escape
         glutLeaveMainLoop()
+    elif key == b'w':  # Acercar (zoom in)
+        camera_distance -= 0.5
+    elif key == b's':  # Alejar (zoom out)
+        camera_distance += 0.5
+
+def special_keys(key, x, y):
+    global camera_angle_x, camera_angle_y
+    if key == GLUT_KEY_RIGHT:  # Rotar a la derecha
+        camera_angle_x += 5
+    elif key == GLUT_KEY_LEFT:  # Rotar a la izquierda
+        camera_angle_x -= 5
+    elif key == GLUT_KEY_UP:  # Rotar hacia arriba
+        camera_angle_y += 5
+        if camera_angle_y > 90:  # Limitar la rotación vertical
+            camera_angle_y = 90
+    elif key == GLUT_KEY_DOWN:  # Rotar hacia abajo
+        camera_angle_y -= 5
+        if camera_angle_y < -90:  # Limitar la rotación vertical
+            camera_angle_y = -90
 
 # Inicializar GLUT
 glutInit()
 glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
 glutInitWindowSize(width, height)
-glutCreateWindow(b"3D Model - UPN Building without Textures")
+glutCreateWindow(b"3D Model - UPN Building with Camera Control")
 
 # Inicializar OpenGL
 init()
@@ -103,6 +136,8 @@ init()
 glutDisplayFunc(display)
 glutReshapeFunc(reshape)
 glutKeyboardFunc(keyboard)
+glutSpecialFunc(special_keys)
+glutIdleFunc(display)
 
 # Iniciar el bucle principal
 glutMainLoop()
