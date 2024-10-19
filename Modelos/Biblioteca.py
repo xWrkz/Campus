@@ -19,40 +19,30 @@ def draw_floor():
 
 def draw_cube_hollow():
     glColor3f(0.5, 0.5, 0.5)
-    
-    # Dibujar cara inferior
     glBegin(GL_QUADS)
     glVertex3f(-2, 0, 2)
     glVertex3f(2, 0, 2)
     glVertex3f(2, 0, -2)
     glVertex3f(-2, 0, -2)
     glEnd()
-    
-    # Dibujar cara frontal
     glBegin(GL_QUADS)
     glVertex3f(-2, 0, 2)
     glVertex3f(2, 0, 2)
     glVertex3f(2, 4, 2)
     glVertex3f(-2, 4, 2)
     glEnd()
-    
-    # Dibujar cara trasera
     glBegin(GL_QUADS)
     glVertex3f(-2, 0, -2)
     glVertex3f(2, 0, -2)
     glVertex3f(2, 4, -2)
     glVertex3f(-2, 4, -2)
     glEnd()
-    
-    # Dibujar cara izquierda
     glBegin(GL_QUADS)
     glVertex3f(-2, 0, 2)
     glVertex3f(-2, 0, -2)
     glVertex3f(-2, 4, -2)
     glVertex3f(-2, 4, 2)
     glEnd()
-    
-    # Dibujar cara derecha
     glBegin(GL_QUADS)
     glVertex3f(2, 0, 2)
     glVertex3f(2, 0, -2)
@@ -61,18 +51,14 @@ def draw_cube_hollow():
     glEnd()
 
 def draw_table():
-    glColor3f(0.6, 0.3, 0.1)  # Color de la mesa
-
-    # Dibujar la superficie de la mesa
+    glColor3f(0.6, 0.3, 0.1)
     glBegin(GL_QUADS)
     glVertex3f(-1.5, 1, -1.5)
     glVertex3f(1.5, 1, -1.5)
     glVertex3f(1.5, 1, 1.5)
     glVertex3f(-1.5, 1, 1.5)
     glEnd()
-
-    # Dibujar las patas de la mesa
-    glColor3f(0.4, 0.2, 0.1)  # Color de las patas
+    glColor3f(0.4, 0.2, 0.1)
     for x in [-1.4, 1.4]:
         for z in [-1.4, 1.4]:
             glBegin(GL_QUADS)
@@ -99,7 +85,7 @@ def display():
               0, 1, 0)
     draw_floor()
     draw_cube_hollow()
-    draw_table()  # Dibuja la mesa en el centro del cubo
+    draw_table()
     draw_door()
     glutSwapBuffers()
 
@@ -119,7 +105,6 @@ def mouse_motion(x, y):
         dy = y - mouse_prev_y
         camera_pos[0] -= dx * 0.1
         camera_pos[1] += dy * 0.1
-
     mouse_prev_x = x
     mouse_prev_y = y
     glutPostRedisplay()
@@ -137,16 +122,16 @@ def mouse_button(button, state, x, y):
 def mouse_wheel(button, direction, x, y):
     global camera_pos
     if direction > 0:
-        camera_pos[2] += 1.0  # Acercar
+        camera_pos[2] += 1.0
     elif direction < 0:
-        camera_pos[2] -= 1.0  # Alejar
+        camera_pos[2] -= 1.0
     glutPostRedisplay()
 
 def main():
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
     glutInitWindowSize(800, 600)
-    glutCreateWindow(b'3D Biblioteca con Puerta')
+    glutCreateWindow(b'3D Biblioteca UPN')
     glEnable(GL_DEPTH_TEST)
     glClearColor(0.1, 0.1, 0.1, 1)
     glutDisplayFunc(display)
