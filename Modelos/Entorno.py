@@ -32,7 +32,7 @@ def draw_table():
 def draw_chair():
     glColor3f(0.5, 0.2, 0.1)  # Color de la silla
     glPushMatrix()
-    glScalef(0.5, 0.05, 0.5)  # Asiento
+    glScalef(0.5, 0.05, 0.5)  
     glutSolidCube(1)
     glPopMatrix()
 
@@ -49,69 +49,47 @@ def draw_chair():
         glutSolidCube(1)
         glPopMatrix()
 
-def draw_walls_with_windows():
+def draw_border_patio():
     # Paredes del comedor con ventanas
-    glColor4f(0.8, 0.8, 0.8, 0.5)  # Paredes transparentes
+    glColor4f(0.8, 0.8, 0.8, 0.5)   
     glPushMatrix()
     glTranslatef(0.0, 2.0, 0.0)  
 
     # Pared frontal
     glPushMatrix()
-    glScalef(10.0, 4.0, 0.2)  # Pared frontal
+    glScalef(15.0, 3.0, 0.2)  # Pared frontal
+    glTranslatef(0.30, -0.30, -20.0)
     glutSolidCube(1)
     glPopMatrix()
 
     # Pared trasera
     glPushMatrix()
-    glScalef(10.0, 4.0, 0.2)  # Pared trasera
-    glTranslatef(0.0, 0.0, -6.0)
+    glScalef(15.0, 3.0, 0.2)  # Pared trasera
+    glTranslatef(0.30, -0.30, -80.0)
     glutSolidCube(1)
     glPopMatrix()
 
     # Pared lateral izquierda
     glPushMatrix()
-    glTranslatef(-5.0, 0.0, -3.0)
-    glScalef(0.2, 4.0, 6.0)  # Pared izquierda
+    glTranslatef(-3.0, -0.90, -10.0)
+    glScalef(0.2, 3.0, 12.0)  # Pared izquierda
     glutSolidCube(1)
     glPopMatrix()
 
     # Pared lateral derecha
     glPushMatrix()
-    glTranslatef(5.0, 0.0, -3.0)
-    glScalef(0.2, 4.0, 6.0)  # Pared derecha
+    glTranslatef(12.0, -0.90, -10.0)
+    glScalef(0.2, 3.0, 12.0)  # Pared derecha
     glutSolidCube(1)
     glPopMatrix()
 
     glPopMatrix()
 
-def draw_bench():
-    # Dibujar una banca
-    glColor3f(0.4, 0.2, 0.1)  # Color de la banca marrón
-    glPushMatrix()
-    glScalef(2.0, 0.1, 0.5)  # Asiento de la banca
-    glutSolidCube(1)
-    glPopMatrix()
-
-    # Pies de la banca
-    for x in [-0.9, 0.9]:
-        glPushMatrix()
-        glTranslatef(x, -0.5, 0.0)
-        glScalef(0.1, 1.0, 0.1)
-        glutSolidCube(1)
-        glPopMatrix()
-
-    # Respaldo de la banca
-    glPushMatrix()
-    glTranslatef(0.0, 0.25, -0.2)
-    glScalef(2.0, 0.5, 0.05)
-    glutSolidCube(1)
-    glPopMatrix()
 
 def draw_central_patio():
-    # Dibujar un área de patio central al lado del comedor
     glColor3f(0.5, 0.7, 0.5)  # Color verde para el césped
     glPushMatrix()
-    glTranslatef(15.0, -0.25, 0.0)  # Ubicar el patio al lado derecho del comedor
+    glTranslatef(14.5, -0.25, 0.0)  
     glScalef(15.0, 0.05, 10.0)  # Tamaño del patio
     glutSolidCube(1)
     glPopMatrix()
@@ -120,7 +98,7 @@ def draw_central_patio():
     glColor3f(0.0, 0.0, 0.0)  # Color negro para la línea
     glLineWidth(2)
     glPushMatrix()
-    glTranslatef(15.0, -0.25, 0.0)
+    glTranslatef(14.5, -0.25, 0.0)
 
     # Dibujar un cuadrado alrededor del patio
     glBegin(GL_LINE_LOOP)
@@ -132,20 +110,13 @@ def draw_central_patio():
     
     glPopMatrix()
 
-    # Dibujar bancas alrededor del patio
-    for (x, z) in [(22.0, 2.5), (22.0, -2.5), (7.0, 2.5), (7.0, -2.5)]:
-        glPushMatrix()
-        glTranslatef(x, 0.0, z)  # Posición de las bancas
-        draw_bench()
-        glPopMatrix()
 
 def draw_building():
     # Color de la pared del edificio (gris claro)
     glColor3f(0.7, 0.7, 0.7)  
     
-    # Cuerpo del edificio
     glPushMatrix()
-    glScalef(8.0, 10.0, 4.0)  # Tamaño del edificio
+    glScalef(35.0, 10.0, 15.0)  # Tamaño del edificio
     glutSolidCube(1)
     glPopMatrix()
     
@@ -154,19 +125,47 @@ def draw_building():
     for x in [-3.0, 0.0, 3.0]:  # Posición horizontal de las ventanas
         for y in [2.0, 4.0, 6.0]:  # Posición vertical de las ventanas
             glPushMatrix()
-            glTranslatef(x, y, 2.05)  # Posicionar ventanas ligeramente fuera de la fachada
-            glScalef(1.5, 1.5, 0.1)  # Tamaño de las ventanas
+            glTranslatef(x, y, 2.05)  
+            glScalef(1.5, 1.5, 0.1)  
             glutSolidCube(1)
             glPopMatrix()
 
     # Puerta de entrada
     glColor3f(0.4, 0.2, 0.1)  # Color de la puerta (marrón)
     glPushMatrix()
-    glTranslatef(0.0, -3.5, 2.05)  # Posicionar la puerta en la parte inferior del edificio
+    glTranslatef(-15.0, -3.5, 7.5)  # Posicionar la puerta en la parte inferior del edificio
     glScalef(2.0, 3.0, 0.1)  # Tamaño de la puerta
     glutSolidCube(1)
     glPopMatrix()
 
+def draw_railings():
+    glColor3f(0.4, 0.4, 0.4)  
+
+    # Barandillas a la izquierda
+    for y in range(0, 16, 5):  
+        glPushMatrix()
+        glTranslatef(-12.0, 2.5, y - 15)  
+        glScalef(0.1, 0.5, 0.1) 
+        glutSolidCube(1)
+        glPopMatrix()
+
+    # Barandillas a la derecha
+    for y in range(0, 16, 5):  
+        glPushMatrix()
+        glTranslatef(-8.0, 2.5, y - 15)  
+        glScalef(0.1, 0.5, 0.1)  
+        glutSolidCube(1)
+        glPopMatrix()
+
+def draw_vertical_path():
+    # Color del camino vertical (gris claro)
+    glColor3f(0.7, 0.7, 0.7)  
+    glPushMatrix()
+    glTranslatef(-10.0, 2.5, 0.0)  
+    glScalef(4.0, 0.05, 40.0) # Tamaño del camino (ancho y largo, ahora el doble)
+    glutSolidCube(1)
+    glPopMatrix()
+    draw_railings()
 
 def draw_scene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -177,8 +176,8 @@ def draw_scene():
     glRotatef(camera_angle_x, 1.0, 0.0, 0.0)
     glRotatef(camera_angle_y, 0.0, 1.0, 0.0)
 
-    # Dibujar suelo (el terreno de la universidad)
-    glColor3f(0.3, 0.3, 0.3)  # Color gris oscuro para el terreno
+    # Dibujar suelo inferior(el terreno del patio)
+    glColor3f(0.0, 0.0, 0.0)  # Color gris oscuro para el terreno
     glBegin(GL_QUADS)
     glVertex3f(-100.0, -0.5, -100.0)
     glVertex3f(100.0, -0.5, -100.0)
@@ -186,28 +185,31 @@ def draw_scene():
     glVertex3f(-100.0, -0.5, 100.0)
     glEnd()
 
+    # Dibujar suelo (el terreno de la universidad)
+    glColor3f(0.3, 0.3, 0.3)  # Color gris oscuro para el terreno
+    glBegin(GL_QUADS)
+    glVertex3f(-100.0, 2.5, -100.0)
+    glVertex3f(100.0, 2.5, -100.0)
+    glVertex3f(100.0, 2.5, 100.0)
+    glVertex3f(-100.0, 2.5, 100.0)
+    glEnd()
+
+    draw_vertical_path()
     # Dibujar paredes del comedor con ventanas
-    draw_walls_with_windows()
-
-    # Dibujar mesa en el centro del comedor
     glPushMatrix()
-    glTranslatef(0.0, 0.0, 0.0)
-    draw_table()
+    glTranslatef(10.0, 0.0, 10.0)
+    draw_border_patio()
     glPopMatrix()
-
-    # Dibujar sillas alrededor de la mesa
-    for (x, z) in [(-1.5, 0.8), (1.5, 0.8), (-1.5, -0.8), (1.5, -0.8)]:
-        glPushMatrix()
-        glTranslatef(x, 0.0, z)
-        draw_chair()
-        glPopMatrix()
-
     # Dibujar el patio central al lado del comedor
     draw_central_patio()
 
     # Dibujar el edificio cercano al comedor
     glPushMatrix()
-    glTranslatef(10.0, 5.0, -30.0)  # Ubicar el edificio en la escena
+    glTranslatef(17.50, 7.5, -20.0)  # Ubicar el edificio en la escena
+    draw_building()
+    glPopMatrix()
+    glPushMatrix()
+    glTranslatef(17.50, 7.5, 20.0)  # Ubicar el edificio en la escena
     draw_building()
     glPopMatrix()
 
@@ -239,7 +241,7 @@ def reshape(width, height):
 def main():
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
-    glutInitWindowSize(800, 600)
+    glutInitWindowSize(1600, 900)
     glutCreateWindow(b"Comedor con Patio Central")
     init()
     glutDisplayFunc(draw_scene)
