@@ -3,7 +3,7 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
 plane_size = 10
-camera_pos = [0, -2, -15]
+camera_pos = [0, 2, -15]
 mouse_prev_x = 0
 mouse_prev_y = 0
 is_mouse_dragging = False
@@ -17,29 +17,56 @@ def draw_floor():
     glVertex3f(-plane_size, 0, plane_size)
     glEnd()
 
-def draw_cube():
+def draw_cube_hollow():
     glColor3f(0.5, 0.5, 0.5)
+    
+    # Dibujar cara inferior
+    glBegin(GL_QUADS)
+    glVertex3f(-2, 0, 2)
+    glVertex3f(2, 0, 2)
+    glVertex3f(2, 0, -2)
+    glVertex3f(-2, 0, -2)
+    glEnd()
+    
+    # Dibujar cara frontal
     glBegin(GL_QUADS)
     glVertex3f(-2, 0, 2)
     glVertex3f(2, 0, 2)
     glVertex3f(2, 4, 2)
     glVertex3f(-2, 4, 2)
+    glEnd()
+    
+    # Dibujar cara trasera
+    glBegin(GL_QUADS)
     glVertex3f(-2, 0, -2)
-    glVertex3f(-2, 4, -2)
+    glVertex3f(2, 0, -2)
     glVertex3f(2, 4, -2)
-    glVertex3f(2, 0, -2)
-    glVertex3f(-2, 0, -2)
-    glVertex3f(-2, 0, 2)
-    glVertex3f(-2, 4, 2)
     glVertex3f(-2, 4, -2)
-    glVertex3f(2, 0, -2)
+    glEnd()
+    
+    # Dibujar cara izquierda
+    glBegin(GL_QUADS)
+    glVertex3f(-2, 0, 2)
+    glVertex3f(-2, 0, -2)
+    glVertex3f(-2, 4, -2)
+    glVertex3f(-2, 4, 2)
+    glEnd()
+    
+    # Dibujar cara derecha
+    glBegin(GL_QUADS)
     glVertex3f(2, 0, 2)
+    glVertex3f(2, 0, -2)
+    glVertex3f(2, 4, -2)
+    glVertex3f(2, 4, 2)
+    glEnd()
+
+    # Dibujar el borde superior del cubo (opcional, para que no se vea plano)
+    glColor3f(0.5, 0.5, 0.5)
+    glBegin(GL_LINE_LOOP)
+    glVertex3f(-2, 4, 2)
     glVertex3f(2, 4, 2)
     glVertex3f(2, 4, -2)
-    glVertex3f(-2, 0, -2)
-    glVertex3f(-2, 0, 2)
-    glVertex3f(2, 0, 2)
-    glVertex3f(2, 0, -2)
+    glVertex3f(-2, 4, -2)
     glEnd()
 
 def draw_door():
@@ -54,9 +81,11 @@ def draw_door():
 def display():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
-    glTranslatef(camera_pos[0], camera_pos[1], camera_pos[2])
+    gluLookAt(camera_pos[0], camera_pos[1], camera_pos[2],
+              camera_pos[0], camera_pos[1], 0,
+              0, 1, 0)
     draw_floor()
-    draw_cube()
+    draw_cube_hollow()
     draw_door()
     glutSwapBuffers()
 
@@ -81,7 +110,7 @@ def mouse_motion(x, y):
     mouse_prev_y = y
     glutPostRedisplay()
 
-def mouse_click(button, state, x, y):
+def mouse_button(button, state, x, y):
     global is_mouse_dragging, mouse_prev_x, mouse_prev_y
     if button == GLUT_LEFT_BUTTON:
         if state == GLUT_DOWN:
@@ -91,17 +120,26 @@ def mouse_click(button, state, x, y):
         else:
             is_mouse_dragging = False
 
+def mouse_wheel(button, direction, x, y):
+    global camera_pos
+    if direction > 0:
+        camera_pos[2] += 1.0  # Acercar
+    elif direction < 0:
+        camera_pos[2] -= 1.0  # Alejar
+    glutPostRedisplay()
+
 def main():
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
     glutInitWindowSize(800, 600)
-    glutCreateWindow(b'3D Biblioteca fachada')
+    glutCreateWindow(b'3D Biblioteca con Puerta')
     glEnable(GL_DEPTH_TEST)
     glClearColor(0.1, 0.1, 0.1, 1)
     glutDisplayFunc(display)
     glutReshapeFunc(reshape)
     glutMotionFunc(mouse_motion)
-    glutMouseFunc(mouse_click)
+    glutMouseFunc(mouse_button)
+    glutMouseWheelFunc(mouse_wheel)
     glutMainLoop()
 
 if __name__ == "__main__":
