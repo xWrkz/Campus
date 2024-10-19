@@ -20,6 +20,7 @@ def draw_floor():
 def draw_cube_hollow():
     glColor3f(0.5, 0.5, 0.5)
     
+    # Dibujar cara inferior
     glBegin(GL_QUADS)
     glVertex3f(-2, 0, 2)
     glVertex3f(2, 0, 2)
@@ -27,6 +28,7 @@ def draw_cube_hollow():
     glVertex3f(-2, 0, -2)
     glEnd()
     
+    # Dibujar cara frontal
     glBegin(GL_QUADS)
     glVertex3f(-2, 0, 2)
     glVertex3f(2, 0, 2)
@@ -34,6 +36,7 @@ def draw_cube_hollow():
     glVertex3f(-2, 4, 2)
     glEnd()
     
+    # Dibujar cara trasera
     glBegin(GL_QUADS)
     glVertex3f(-2, 0, -2)
     glVertex3f(2, 0, -2)
@@ -41,6 +44,7 @@ def draw_cube_hollow():
     glVertex3f(-2, 4, -2)
     glEnd()
     
+    # Dibujar cara izquierda
     glBegin(GL_QUADS)
     glVertex3f(-2, 0, 2)
     glVertex3f(-2, 0, -2)
@@ -48,6 +52,7 @@ def draw_cube_hollow():
     glVertex3f(-2, 4, 2)
     glEnd()
     
+    # Dibujar cara derecha
     glBegin(GL_QUADS)
     glVertex3f(2, 0, 2)
     glVertex3f(2, 0, -2)
@@ -55,13 +60,27 @@ def draw_cube_hollow():
     glVertex3f(2, 4, 2)
     glEnd()
 
-    glColor3f(0.5, 0.5, 0.5)
-    glBegin(GL_LINE_LOOP)
-    glVertex3f(-2, 4, 2)
-    glVertex3f(2, 4, 2)
-    glVertex3f(2, 4, -2)
-    glVertex3f(-2, 4, -2)
+def draw_table():
+    glColor3f(0.6, 0.3, 0.1)  # Color de la mesa
+
+    # Dibujar la superficie de la mesa
+    glBegin(GL_QUADS)
+    glVertex3f(-1.5, 1, -1.5)
+    glVertex3f(1.5, 1, -1.5)
+    glVertex3f(1.5, 1, 1.5)
+    glVertex3f(-1.5, 1, 1.5)
     glEnd()
+
+    # Dibujar las patas de la mesa
+    glColor3f(0.4, 0.2, 0.1)  # Color de las patas
+    for x in [-1.4, 1.4]:
+        for z in [-1.4, 1.4]:
+            glBegin(GL_QUADS)
+            glVertex3f(x, 0, z)
+            glVertex3f(x + 0.2, 0, z)
+            glVertex3f(x + 0.2, 1, z)
+            glVertex3f(x, 1, z)
+            glEnd()
 
 def draw_door():
     glColor3f(0.8, 0.5, 0.3)
@@ -80,6 +99,7 @@ def display():
               0, 1, 0)
     draw_floor()
     draw_cube_hollow()
+    draw_table()  # Dibuja la mesa en el centro del cubo
     draw_door()
     glutSwapBuffers()
 
@@ -117,9 +137,9 @@ def mouse_button(button, state, x, y):
 def mouse_wheel(button, direction, x, y):
     global camera_pos
     if direction > 0:
-        camera_pos[2] += 1.0
+        camera_pos[2] += 1.0  # Acercar
     elif direction < 0:
-        camera_pos[2] -= 1.0 
+        camera_pos[2] -= 1.0  # Alejar
     glutPostRedisplay()
 
 def main():
