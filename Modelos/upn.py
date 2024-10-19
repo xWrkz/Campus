@@ -14,6 +14,54 @@ def init():
     glEnable(GL_BLEND)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)  
 
+def draw_terreno_edificios():
+    # Dibujar suelo (el terreno de la universidad) con un hueco en el centro
+    glColor3f(0.3, 0.3, 0.3)  # Color gris oscuro para el terreno
+    
+    # Parte izquierda del terreno
+    glBegin(GL_QUADS)
+    glVertex3f(-100.0, 2.5, -100.0)
+    glVertex3f( 6.5, 2.5, -100.0)
+    glVertex3f( 6.5, 2.5, 100.0) #control 
+    glVertex3f(-100.0, 2.5, 100.0)
+    glEnd()
+
+    # Parte derecha del terreno
+    glBegin(GL_QUADS)
+    glVertex3f(20.0, 2.5, -100.0)
+    glVertex3f(100.0, 2.5, -100.0)
+    glVertex3f(100.0, 2.5, 100.0)
+    glVertex3f(20.0, 2.5, 100.0)
+    glEnd()
+
+    # Parte superior del terreno
+    glBegin(GL_QUADS)
+    glVertex3f(-20.0, 2.5, 6.5) #no
+    glVertex3f(20.0, 2.5, 6.5) #no
+    glVertex3f(20.0, 2.5, 100.0) #no
+    glVertex3f(-20.0, 2.5, 100.0) #no
+    glEnd()
+
+    # Parte inferior del terreno
+    glBegin(GL_QUADS)
+    glVertex3f(-20.0, 2.5, -100.0) #no
+    glVertex3f(20.0, 2.5, -100.0) #no
+    glVertex3f(20.0, 2.5, -6.5) #no
+    glVertex3f(-20.0, 2.5, -6.5) #no
+    glEnd()
+
+
+
+def draw_terreno_patio():
+# Dibujar suelo inferior(el terreno del patio)
+    glColor3f(0.0, 0.0, 0.0)  # Color gris oscuro para el terreno
+    glBegin(GL_QUADS)
+    glVertex3f(-100.0, -0.5, -100.0)
+    glVertex3f(100.0, -0.5, -100.0)
+    glVertex3f(100.0, -0.5, 100.0)
+    glVertex3f(-100.0, -0.5, 100.0)
+    glEnd()
+
 def draw_table():
     glColor3f(0.6, 0.3, 0.1)  # Color de la mesa marrón
     glPushMatrix()
@@ -151,23 +199,15 @@ def draw_scene():
     glRotatef(camera_angle_x, 1.0, 0.0, 0.0)
     glRotatef(camera_angle_y, 0.0, 1.0, 0.0)
 
-    # Dibujar suelo inferior(el terreno del patio)
-    glColor3f(0.0, 0.0, 0.0)  # Color gris oscuro para el terreno
-    glBegin(GL_QUADS)
-    glVertex3f(-100.0, -0.5, -100.0)
-    glVertex3f(100.0, -0.5, -100.0)
-    glVertex3f(100.0, -0.5, 100.0)
-    glVertex3f(-100.0, -0.5, 100.0)
-    glEnd()
+    #terreno de edificios
+    glPushMatrix()
+    draw_terreno_edificios()
+    glPopMatrix()
 
-    # Dibujar suelo (el terreno de la universidad)
-    glColor3f(0.3, 0.3, 0.3)  # Color gris oscuro para el terreno
-    glBegin(GL_QUADS)
-    glVertex3f(-100.0, 2.5, -100.0)
-    glVertex3f(100.0, 2.5, -100.0)
-    glVertex3f(100.0, 2.5, 100.0)
-    glVertex3f(-100.0, 2.5, 100.0)
-    glEnd()
+    #terreno del patio
+    glPushMatrix()
+    draw_terreno_patio()
+    glPopMatrix()
 
     # Dibujar paredes del comedor con ventanas
     glPushMatrix()
