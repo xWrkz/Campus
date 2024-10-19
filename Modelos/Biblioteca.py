@@ -20,7 +20,6 @@ def draw_floor():
 def draw_cube_hollow():
     glColor3f(0.5, 0.5, 0.5)
     
-    # Dibujar cara inferior
     glBegin(GL_QUADS)
     glVertex3f(-2, 0, 2)
     glVertex3f(2, 0, 2)
@@ -28,7 +27,6 @@ def draw_cube_hollow():
     glVertex3f(-2, 0, -2)
     glEnd()
     
-    # Dibujar cara frontal
     glBegin(GL_QUADS)
     glVertex3f(-2, 0, 2)
     glVertex3f(2, 0, 2)
@@ -36,7 +34,6 @@ def draw_cube_hollow():
     glVertex3f(-2, 4, 2)
     glEnd()
     
-    # Dibujar cara trasera
     glBegin(GL_QUADS)
     glVertex3f(-2, 0, -2)
     glVertex3f(2, 0, -2)
@@ -44,7 +41,6 @@ def draw_cube_hollow():
     glVertex3f(-2, 4, -2)
     glEnd()
     
-    # Dibujar cara izquierda
     glBegin(GL_QUADS)
     glVertex3f(-2, 0, 2)
     glVertex3f(-2, 0, -2)
@@ -52,7 +48,6 @@ def draw_cube_hollow():
     glVertex3f(-2, 4, 2)
     glEnd()
     
-    # Dibujar cara derecha
     glBegin(GL_QUADS)
     glVertex3f(2, 0, 2)
     glVertex3f(2, 0, -2)
@@ -60,7 +55,6 @@ def draw_cube_hollow():
     glVertex3f(2, 4, 2)
     glEnd()
 
-    # Dibujar el borde superior del cubo (opcional, para que no se vea plano)
     glColor3f(0.5, 0.5, 0.5)
     glBegin(GL_LINE_LOOP)
     glVertex3f(-2, 4, 2)
@@ -123,9 +117,9 @@ def mouse_button(button, state, x, y):
 def mouse_wheel(button, direction, x, y):
     global camera_pos
     if direction > 0:
-        camera_pos[2] += 1.0  # Acercar
+        camera_pos[2] += 1.0
     elif direction < 0:
-        camera_pos[2] -= 1.0  # Alejar
+        camera_pos[2] -= 1.0 
     glutPostRedisplay()
 
 def main():
