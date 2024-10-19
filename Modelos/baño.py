@@ -19,7 +19,7 @@ def draw_floor():
     glBegin(GL_QUADS)
     glColor3f(1.0, 1.0, 1.0)  # Color blanco para el suelo
 
-    # Definir las coordenadas del suelo
+    # Definir las coordenadas del suelo como un rectángulo
     glVertex3f(-10.0, 0.0, -10.0)
     glVertex3f( 10.0, 0.0, -10.0)
     glVertex3f( 10.0, 0.0,  10.0)
@@ -61,20 +61,20 @@ def draw_toilets():
     for i in range(3):
         x_offset = -1.5 + i * 1.5  # Espaciados
         glPushMatrix()
-        glTranslatef(x_offset, 0.25, 1.5)  # Posicionar los inodoros (encima del suelo)
-        glScalef(0.3, 0.5, 0.4)  # Escalar para crear rectángulos
+        glTranslatef(x_offset, 0.5, 1.5)  # Posicionar los inodoros (encima del suelo)
+        glScalef(0.5, 1.0, 0.5)  # Escalar para crear inodoros más anchos y altos
         glutSolidCube(1.0)  # Dibujar el inodoro como un cubo escalado
         glPopMatrix()
 
-def draw_pipes():
-    """Dibujar 3 cañerías en la última parte del cubo en color marrón."""
-    glColor3f(0.6, 0.3, 0.0)  # Color marrón para las cañerías
+def draw_sinks():
+    """Dibujar tres lavaderos en el cubo."""
+    glColor3f(0.8, 0.8, 0.8)  # Color gris claro para los lavaderos
     for i in range(3):
-        x_offset = -1.5 + i * 1.5
+        x_offset = -1.5 + i * 1.5  # Posicionar los lavaderos
         glPushMatrix()
-        glTranslatef(x_offset, 0.25, -1.5)  # Posicionar las cañerías encima del suelo
-        glRotatef(90, 1, 0, 0)  # Girar los cilindros horizontalmente
-        glutSolidCylinder(0.1, 1.0, 20, 20)  # Cañerías como cilindros
+        glTranslatef(x_offset, 0.5, -1.5)  # Posicionar los lavaderos encima del suelo
+        glScalef(1.0, 0.5, 0.5)  # Escalar para hacer los lavaderos más anchos
+        glutSolidCube(1.0)  # Dibujar el lavadero como un cubo escalado
         glPopMatrix()
 
 def display():
@@ -96,7 +96,7 @@ def display():
     draw_cube_room()       # Dibujar el cubo principal
     draw_internal_divisions()  # Dibujar las divisiones internas
     draw_toilets()         # Dibujar los inodoros como rectángulos negros
-    draw_pipes()           # Dibujar las cañerías en color marrón
+    draw_sinks()           # Dibujar tres lavaderos en color gris claro
 
     glutSwapBuffers()
 
@@ -159,3 +159,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
