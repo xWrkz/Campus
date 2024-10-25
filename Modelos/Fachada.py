@@ -1,143 +1,193 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtOpenGL import QOpenGLWidget
 from OpenGL.GL import *
-from OpenGL.GLUT import *
 from OpenGL.GLU import *
-import math
+from PyQt5.QtCore import Qt
 
-width, height = 800, 600
-camera_angle_x = 0  # Ángulo de rotación en el eje X
-camera_angle_y = 0  # Ángulo de rotación en el eje Y
-camera_distance = 5  # Distancia de la cámara al objeto
+class OpenGLWidget(QOpenGLWidget):
+    def __init__(self):
+        super(OpenGLWidget, self).__init__()
+        self.setMinimumSize(800, 600)
+        
+        # Variables de cámara
+        self.camera_pos = [0.0, 0.0, -15.0]
+        self.camera_angle = [0.0, 0.0]  # (yaw, pitch)
 
-def init():
-    glClearColor(0.53, 0.81, 0.98, 1)  # Cielo azul claro
-    glEnable(GL_DEPTH_TEST)
+    def initializeGL(self):
+        glEnable(GL_DEPTH_TEST)
+        glClearColor(0.1, 0.1, 0.1, 1)
 
-def draw_building():
-    # Estructura principal del edificio
-    glPushMatrix()
-    glTranslatef(0, 0, 0)  # Posición base
-    glScalef(3, 1.5, 1)  # Escalar a las proporciones del edificio
-    glColor3f(0.8, 0.8, 0.8)  # Color gris claro para el edificio
-    glutSolidCube(1)
-    glPopMatrix()
+    def resizeGL(self, w, h):
+        glViewport(0, 0, w, h)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluPerspective(45, w / h, 0.1, 50.0)
+        glMatrixMode(GL_MODELVIEW)
 
-    # Cartel amarillo
-    glPushMatrix()
-    glTranslatef(0, 0.75, 0.52)  # Posicionar el cartel frente al edificio
-    glScalef(2, 0.3, 0.1)  # Escalar el cartel amarillo
-    glColor3f(1, 1, 0)  # Color amarillo para el cartel
-    glutSolidCube(1)
-    glPopMatrix()
+    def paintGL(self):
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glLoadIdentity()
 
-    # Dibujar las ventanas (pequeños cubos en filas)
-    for i in range(-2, 3):  # 5 columnas
-        for j in range(0, 2):  # 2 filas
-            glPushMatrix()
-            glTranslatef(i * 0.6, j * 0.5 - 0.25, 0.51)  # Posicionar cada ventana
-            glScalef(0.5, 0.25, 0.05)  # Escalar a tamaño de ventana
-            glColor3f(0.3, 0.3, 0.3)  # Color gris oscuro para ventanas
-            glutSolidCube(1)
-            glPopMatrix()
+        # Configurar la cámara
+        self.setup_camera()
 
-    # Dibujar las rejas de entrada
-    for i in range(-3, 4):  # 7 barras
+        # Dibuja el plano base
+        self.draw_plane((0.021057, 5, 0.71124), (30, 10, 1))
+
+        # Dibuja el primer nuevo plano
+        self.draw_new_plane((1.3815, 5, 5.5682), (6.56, 1.02, 3), (90, 0, 0))
+
+        # Dibuja el segundo nuevo plano
+        self.draw_new_plane((1.074, 2.51, 10), (7, 5.5, 1), (0, 0, 0))
+
+        # Dibuja los cubos existentes
+        self.draw_cubes()
+
+        # Dibuja los nuevos cubos
+        self.draw_new_cubes()
+
+    def setup_camera(self):
+        # Calcula la dirección de la cámara usando ángulos
+        yaw_rad = self.camera_angle[0] * (3.14159 / 180.0)
+        pitch_rad = self.camera_angle[1] * (3.14159 / 180.0)
+
+        # Dirección de la cámara
+        cam_dir_x = -1 * (abs(yaw_rad))
+        cam_dir_y = abs(pitch_rad)
+        cam_dir_z = -1 * (abs(yaw_rad))
+
+        gluLookAt(
+            self.camera_pos[0], self.camera_pos[1], self.camera_pos[2],
+            self.camera_pos[0] + cam_dir_x, self.camera_pos[1] + cam_dir_y, self.camera_pos[2] + cam_dir_z,
+            0, 1, 0
+        )
+
+    def draw_cubes(self): #base fachada
+        # Primer par de cubos
+        self.draw_cube((-10, -1.054, 3.6), (5, 2, 3), (0, 0, 0))
+        self.draw_cube((12.861, -0.726, 3.6), (5, 2, 3), (0, 0, 0))
+
+        # Segundo par de cubos
+        self.draw_cube((9.66, 4.22, 9.5298), (6.940, 1.8, 3), (0, 0, -90))
+        self.draw_cube((-6.81, 3.88, 9.5298), (6.940, 1.8, 3), (0, 0, -90))
+
+        # Tercer par de cubos
+        self.draw_cube((-6.8041, 5.796, 3.6), (5, 1.78, 3), (0, 0, -90))
+        self.draw_cube((-9.6482, 6.1733, 3.6), (5, 1.78, 3), (0, 0, -90))
+
+    def draw_new_cubes(self): #soporte cartel
+        # Dibuja los nuevos cubos
+        positions = [
+            (-2.4225, 5, 8.2858),
+            (1.582, 5, 8.2858),
+            (5.7811, 5, 8.2858)
+        ]
+        scale = (0.25, 0.20, 1.710)
+        rotation = (0, 0, 0)
+
+        for position in positions:
+            self.draw_cube(position, scale, rotation)
+
+    def draw_cube(self, position, scale, rotation):
         glPushMatrix()
-        glTranslatef(i * 0.15, -0.65, 0.51)  # Espaciado entre barras
-        glScalef(0.05, 0.5, 0.05)  # Barras verticales finas
-        glColor3f(0, 0, 0)  # Color negro para las rejas
-        glutSolidCube(1)
+        glTranslatef(*position)  # Trasladar a la posición
+        glScalef(*scale)         # Escalar
+        glRotatef(rotation[0], 1, 0, 0)  # Rotar alrededor del eje X
+        glRotatef(rotation[1], 0, 1, 0)  # Rotar alrededor del eje Y
+        glRotatef(rotation[2], 0, 0, 1)  # Rotar alrededor del eje Z
+        
+        # Define los vértices del cubo
+        vertices = [
+            (1, -1, -1),
+            (1, 1, -1),
+            (-1, 1, -1),
+            (-1, -1, -1),
+            (1, -1, 1),
+            (1, 1, 1),
+            (-1, -1, 1),
+            (-1, 1, 1)
+        ]
+
+        # Dibuja las aristas del cubo
+        glBegin(GL_LINES)
+        edges = [
+            (0, 1),
+            (1, 2),
+            (2, 3),
+            (3, 0),
+            (4, 5),
+            (5, 7),
+            (7, 6),
+            (6, 4),
+            (0, 4),
+            (1, 5),
+            (2, 7),
+            (3, 6)
+        ]
+        for edge in edges:
+            for vertex in edge:
+                glVertex3fv(vertices[vertex])
+        glEnd()
+        
         glPopMatrix()
 
-    # Escaleras a la derecha del edificio
-    for i in range(5):  # 5 escalones
+    def draw_plane(self, position, scale):
         glPushMatrix()
-        glTranslatef(1.5, -0.75 + (i * 0.2), 0)  # Apilar escalones
-        glScalef(0.5, 0.05, 0.3)  # Escalones largos y delgados
-        glColor3f(0.7, 0.7, 0.7)  # Color gris metálico para las escaleras
-        glutSolidCube(1)
+        glTranslatef(*position)  # Trasladar a la posición
+        glScalef(*scale)         # Escalar
+        
+        glBegin(GL_QUADS)
+        glVertex3f(-0.5, 0, -0.5)
+        glVertex3f(0.5, 0, -0.5)
+        glVertex3f(0.5, 0, 0.5)
+        glVertex3f(-0.5, 0, 0.5)
+        glEnd()
+        
         glPopMatrix()
 
-    # Pasamanos de las escaleras
-    glPushMatrix()
-    glTranslatef(1.5, 0.25, 0)  # Pasamanos sobre las escaleras
-    glScalef(0.05, 1, 0.05)  # Cilindro delgado y largo
-    glColor3f(0.5, 0.5, 0.5)  # Color gris metálico
-    glRotatef(90, 1, 0, 0)  # Rotar para orientarlo correctamente
-    glutSolidCylinder(0.1, 1, 10, 10)
-    glPopMatrix()
+    def draw_new_plane(self, position, scale, rotation):
+        glPushMatrix()
+        glTranslatef(*position)  # Trasladar a la posición
+        glScalef(*scale)         # Escalar
+        glRotatef(rotation[0], 1, 0, 0)  # Rotar alrededor del eje X
+        glRotatef(rotation[1], 0, 1, 0)  # Rotar alrededor del eje Y
+        glRotatef(rotation[2], 0, 0, 1)  # Rotar alrededor del eje Z
+        
+        glBegin(GL_QUADS)
+        glVertex3f(-0.5, 0, -0.5)
+        glVertex3f(0.5, 0, -0.5)
+        glVertex3f(0.5, 0, 0.5)
+        glVertex3f(-0.5, 0, 0.5)
+        glEnd()
+        
+        glPopMatrix()
 
-    # Elevador de vidrio
-    glPushMatrix()
-    glTranslatef(1.7, 0.5, 0)  # Posicionar el elevador a la derecha
-    glScalef(0.2, 1, 0.2)  # Escalar a proporciones de elevador
-    glColor4f(0.8, 0.8, 0.9, 0.6)  # Color gris claro con un poco de transparencia
-    glutSolidCube(1)
-    glPopMatrix()
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_W:  # Mover cámara hacia adelante
+            self.camera_pos[2] += 0.5
+        elif event.key() == Qt.Key_S:  # Mover cámara hacia atrás
+            self.camera_pos[2] -= 0.5
+        elif event.key() == Qt.Key_A:  # Rotar a la izquierda
+            self.camera_angle[0] -= 5
+        elif event.key() == Qt.Key_D:  # Rotar a la derecha
+            self.camera_angle[0] += 5
+        elif event.key() == Qt.Key_Q:  # Mirar hacia arriba
+            self.camera_angle[1] += 5
+        elif event.key() == Qt.Key_E:  # Mirar hacia abajo
+            self.camera_angle[1] -= 5
 
-def display():
-    global camera_angle_x, camera_angle_y, camera_distance
+        self.update()  # Redibuja la escena
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    glLoadIdentity()
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+        self.opengl_widget = OpenGLWidget()
+        self.setCentralWidget(self.opengl_widget)
+        self.setWindowTitle("OpenGL with PyQt5")
+        self.show()
 
-    # Calcular la posición de la cámara en base a los ángulos y la distancia
-    camera_x = camera_distance * math.sin(math.radians(camera_angle_x)) * math.cos(math.radians(camera_angle_y))
-    camera_y = camera_distance * math.sin(math.radians(camera_angle_y))
-    camera_z = camera_distance * math.cos(math.radians(camera_angle_x)) * math.cos(math.radians(camera_angle_y))
-
-    # Establecer la posición de la cámara
-    gluLookAt(camera_x, camera_y, camera_z, 0, 0, 0, 0, 1, 0)
-
-    draw_building()  # Dibujar el edificio
-
-    glutSwapBuffers()
-
-def reshape(w, h):
-    glViewport(0, 0, w, h)
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()
-    gluPerspective(45, w/h, 0.1, 50)
-    glMatrixMode(GL_MODELVIEW)
-
-def keyboard(key, x, y):
-    global camera_distance
-    if key == b'\x1b':  # Tecla Escape
-        glutLeaveMainLoop()
-    elif key == b'w':  # Acercar (zoom in)
-        camera_distance -= 0.5
-    elif key == b's':  # Alejar (zoom out)
-        camera_distance += 0.5
-
-def special_keys(key, x, y):
-    global camera_angle_x, camera_angle_y
-    if key == GLUT_KEY_RIGHT:  # Rotar a la derecha
-        camera_angle_x += 5
-    elif key == GLUT_KEY_LEFT:  # Rotar a la izquierda
-        camera_angle_x -= 5
-    elif key == GLUT_KEY_UP:  # Rotar hacia arriba
-        camera_angle_y += 5
-        if camera_angle_y > 90:  # Limitar la rotación vertical
-            camera_angle_y = 90
-    elif key == GLUT_KEY_DOWN:  # Rotar hacia abajo
-        camera_angle_y -= 5
-        if camera_angle_y < -90:  # Limitar la rotación vertical
-            camera_angle_y = -90
-
-# Inicializar GLUT
-glutInit()
-glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
-glutInitWindowSize(width, height)
-glutCreateWindow(b"3D Model - UPN Building with Camera Control")
-
-# Inicializar OpenGL
-init()
-
-# Configurar funciones de visualización, redimensionamiento y teclado
-glutDisplayFunc(display)
-glutReshapeFunc(reshape)
-glutKeyboardFunc(keyboard)
-glutSpecialFunc(special_keys)
-glutIdleFunc(display)
-
-# Iniciar el bucle principal
-glutMainLoop()
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    sys.exit(app.exec_())
