@@ -54,8 +54,6 @@ def draw_basket():
     glRotatef(90, 1, 0, 0)  # Girar para hacer un círculo
     glutSolidTorus(0.1, 0.3, 20, 20)  # Aro
     glPopMatrix()
-
-
     # Dibujar el cubo y prisma negros
     draw_black_cubes_and_pyramid()  # Llama a la función para dibujar el cubo y prisma
 
@@ -94,6 +92,25 @@ def draw_walls():
         glutSolidCube(1)
         glPopMatrix()
 
+def draw_rectangle():
+    glColor3f(0.75, 0.75, 0.75)  # Color gris
+    glBegin(GL_QUADS)
+    # Vértices del rectángulo
+    glVertex3f(-14, 0.02, -3.0)  # Esquina inferior izquierda
+    glVertex3f(7.0, 0.02, -3.0)   # Esquina inferior derecha
+    glVertex3f(7.0, 0.02, 3.0)    # Esquina superior derecha
+    glVertex3f(-14, 0.02, 3.0)   # Esquina superior izquierda
+    glEnd()
+
+def draw_rectangle_green():
+    glColor3f(0.0, 0.75, 0.0)  # Color gris
+    glBegin(GL_QUADS)
+    # Vértices del rectángulo
+    glVertex3f(-28, 0.01, -5.0)  # Esquina inferior izquierda
+    glVertex3f(7.0, 0.01, -5.0)   # Esquina inferior derecha
+    glVertex3f(7.0, 0.01, 3.0)    # Esquina superior derecha
+    glVertex3f(-28, 0.01, 3.0)   # Esquina superior izquierda
+    glEnd()
 
 def draw_lines():
     glLineWidth(3.0)  # Grosor de 3 píxeles para el contorno
@@ -111,7 +128,7 @@ def draw_lines():
 
 def draw_floor():
     # Dibujar el piso rectangular
-    glColor3f(0.5, 0.5, 0.5)  # Color gris
+    glColor3f(0.5, 0.5, 0.65)  # Color gris
     glBegin(GL_QUADS)
     glVertex3f(-18.0, 0.0, -15.0)  # Ajusta estos valores para el tamaño rectangular
     glVertex3f(18.0, 0.0, -15.0)
@@ -209,14 +226,41 @@ def draw_stairs():
     num_steps = 5
     
     # Color de la banqueta
-    glColor3f(1.0, 0.8, 0.0)  # Color amarillo
+    glColor3f(0.5, 0.5, 0.5)  # Color gris
 
     for i in range(num_steps):
         glPushMatrix()
         # Ajustar la posición para que esté pegada a la pared derecha
-        glTranslatef(0.0, 0.1+(i * stair_height),-12.7 -(i * stair_depth))  # Posición de cada escalón
+        glTranslatef(-3, 0.1 + (i * stair_height), -10 - (i * stair_depth))  # Posición de cada escalón
         glScalef(stair_width, stair_height, stair_depth)  # Tamaño de cada escalón
         glutSolidCube(1)  # Dibujar el escalón
+        glPopMatrix()
+
+    # Dibujar el techo
+    roof_width = stair_width
+    roof_depth = stair_depth * 6
+    roof_height = 0.1  # Altura del techo
+
+    glColor3f(0.75, 0.75, 0.75)  # Color gris claro para el techo
+    glPushMatrix()
+    # Ajustar la posición del techo (elevarlo)
+    glTranslatef(-3, 1.1 + (num_steps * stair_height) + roof_height + 0.5, -9 - (num_steps * stair_depth))  # Colocar el techo
+    glScalef(roof_width, roof_height, roof_depth)  # Tamaño del techo
+    glutSolidCube(1)  # Dibujar el techo
+    glPopMatrix()
+
+    # Dibujar los soportes
+    support_width = 0.1
+    support_height = 2.7
+    support_depth = 0.1  # Añadir el grosor para los soportes
+
+    glColor3f(0.5, 0.5, 0.5)  # Color gris para los soportes
+    for i in [-1, 1]:  # Para dibujar dos soportes
+        glPushMatrix()
+        # Ajustar la posición de los soportes
+        glTranslatef(-3 - (roof_width / 2) * i, 0.4 + (num_steps * stair_height), -10 - (num_steps * stair_depth))  # Colocar cada soporte
+        glScalef(support_width, support_height, support_depth)  # Tamaño del soporte
+        glutSolidCube(1)  # Dibujar el soporte
         glPopMatrix()
 
 def draw_scene():
@@ -233,6 +277,16 @@ def draw_scene():
 
     # Dibujar paredes
     draw_walls()
+
+    glPushMatrix()
+    glTranslatef(-4, 0, -10)  # Desplaza al centro del rectángulo (0, 0.5)
+    draw_rectangle()  # Dibuja el rectángulo
+    glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(10, 0, -10)  # Desplaza al centro del rectángulo (0, 0.5)
+    draw_rectangle_green()  # Dibuja el rectángulo
+    glPopMatrix()
 
     draw_rectangle_outline()
     draw_rectangle_outline2()
@@ -337,12 +391,21 @@ def reshape(width, height):
     glMatrixMode(GL_MODELVIEW)
 
 def keyboard(key, x, y):
-    global camera_distance
+    global camera_distance, camera_angle_x, camera_angle_y
     if key == b'w':
         camera_distance -= 1  # Mover hacia adelante
     elif key == b's':
         camera_distance += 1  # Mover hacia atrás
+    elif key == b'a':
+        camera_angle_y -= 5  # Rotar a la izquierda
+    elif key == b'd':
+        camera_angle_y += 5  # Rotar a la derecha
+    elif key == b'q':
+        camera_angle_x -= 5  # Rotar hacia arriba
+    elif key == b'e':
+        camera_angle_x += 5  # Rotar hacia abajo
     glutPostRedisplay()
+
 
 def main():
     glutInit()
