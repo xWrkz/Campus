@@ -138,34 +138,36 @@ def draw_building():
     glutSolidCube(1)
     glPopMatrix()
 
-def draw_railings():
-    glColor3f(0.4, 0.4, 0.4)  
-
-    # Barandillas a la izquierda
-    for y in range(0, 16, 5):  
-        glPushMatrix()
-        glTranslatef(-12.0, 2.5, y - 15)  
-        glScalef(0.1, 0.5, 0.1) 
-        glutSolidCube(1)
-        glPopMatrix()
-
-    # Barandillas a la derecha
-    for y in range(0, 16, 5):  
-        glPushMatrix()
-        glTranslatef(-8.0, 2.5, y - 15)  
-        glScalef(0.1, 0.5, 0.1)  
-        glutSolidCube(1)
-        glPopMatrix()
-
 def draw_vertical_path():
     # Color del camino vertical (gris claro)
-    glColor3f(0.7, 0.7, 0.7)  
+    glColor3f(0.7, 0.7, 0.7)
     glPushMatrix()
-    glTranslatef(-10.0, 2.5, 0.0)  
-    glScalef(4.0, 0.05, 40.0) # Tamaño del camino (ancho y largo, ahora el doble)
+    glTranslatef(-5.0, 2.5, 0.0)  # Cambiar en el eje X para acercarlo a los edificios
+    glScalef(6.0, 0.05, 90.0)  # Mantener el tamaño del camino vertical
     glutSolidCube(1)
     glPopMatrix()
-    draw_railings()
+
+def draw_horizontal_path(offset_z):
+    # Color del camino horizontal (gris claro)
+    glColor3f(0.7, 0.7, 0.7)
+    glPushMatrix()
+    glTranslatef(0.0, 2.5, offset_z)  # Mover en el eje Z según el parámetro offset_z
+    glScalef(70.0, 0.05, 4.0)  # Camino horizontal más ancho que el vertical
+    glutSolidCube(1)
+    glPopMatrix()
+
+def draw_block():
+    # Dibuja un bloque largo y alto encima del camino
+    glColor3f(0.6, 0.4, 0.2)  # Color marrón para el bloque
+    glPushMatrix()
+    
+    # Posicionar el bloque para que esté alineado con el camino vertical
+    glTranslatef(-5.0, 2.5, 0.0)  # Moverse al lado del camino vertical
+    glScalef(0.5, 1.0, 6.0)  # Tamaño del bloque (alto y largo)
+    glutSolidCube(1)
+    
+    glPopMatrix()
+
 
 def draw_scene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -195,6 +197,9 @@ def draw_scene():
     glEnd()
 
     draw_vertical_path()
+    draw_horizontal_path(-9.0)  # Camino horizontal cerca de la parte trasera
+    draw_horizontal_path(9.0)
+    draw_block()
     # Dibujar paredes del comedor con ventanas
     glPushMatrix()
     glTranslatef(10.0, 0.0, 10.0)
