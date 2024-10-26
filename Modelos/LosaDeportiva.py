@@ -10,81 +10,73 @@ mouse_x, mouse_y = 0, 0
 mouse_left_down = False
 
 def init():
-    glClearColor(0.5, 0.7, 0.9, 1.0)  # Fondo azul claro
+    glClearColor(0.5, 0.7, 0.9, 1.0)
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_BLEND)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
 def draw_half_circle(radius, segments):
-    glLineWidth(2.0)  # Grosor de 3 píxeles para el contorno
-    # Dibujar el contorno del medio círculo cortado horizontalmente
-    glColor3f(1.0, 1.0, 1.0)  # Color negro para el contorno
-    glBegin(GL_LINE_STRIP)  # Usar LINE_STRIP para un medio círculo
-    for i in range(segments + 1):  # +1 para cerrar el arco
-        angle = math.pi * i / segments  # Medio círculo (180 grados)
-        x = radius * math.sin(angle)  # Usar seno para el corte horizontal
-        y = radius * math.cos(angle)  # Usar coseno para el corte horizontal
+    glLineWidth(2.0)
+    glColor3f(1.0, 1.0, 1.0)
+    glBegin(GL_LINE_STRIP)
+    for i in range(segments + 1):
+        angle = math.pi * i / segments
+        x = radius * math.sin(angle)
+        y = radius * math.cos(angle)
         glVertex2f(x, y)
     glEnd()
 
 def draw_circle(radius, segments):
-    glLineWidth(3.0)  # Grosor de 3 píxeles para el contorno
-    glBegin(GL_LINE_LOOP)  # Usar LINE_LOOP para el contorno
+    glLineWidth(3.0)
+    glBegin(GL_LINE_LOOP)
     for i in range(segments):
-        angle = 2 * math.pi * i / segments  # Calcular el ángulo
-        x = radius * math.cos(angle)  # Coordenada X
-        y = radius * math.sin(angle)  # Coordenada Y
-        glVertex2f(x, y)  # Añadir vértice
+        angle = 2 * math.pi * i / segments
+        x = radius * math.cos(angle)
+        y = radius * math.sin(angle)
+        glVertex2f(x, y)
     glEnd()
 
 def draw_Soporte():
-    # Dibujar el soporte de la canasta
-    glColor3f(1.0, 1.0, 0.0)  # Color amarillo para el soporte
+    glColor3f(1.0, 1.0, 0.0)
     glPushMatrix()
-    glTranslatef(0.0, 1.5, 0.0)  # Altura del soporte
-    glScalef(0.1, 3.0, 0.1)  # Escalar el soporte (ancho, alto, profundo)
-    glutSolidCube(1)  # Dibuja un cubo (que se ha escalado a un prisma)
+    glTranslatef(0.0, 1.5, 0.0)
+    glScalef(0.1, 3.0, 0.1)
+    glutSolidCube(1)
     glPopMatrix()
-    # Dibujar el cubo y prisma negros
-    draw_black_cubes_and_pyramid()  # Llama a la función para dibujar el cubo y prisma
+    draw_black_cubes_and_pyramid()
 
 def draw_aro():
-    glColor3f(1.0, 1.0, 0.0)  # Color amarillo para el aro
+    glColor3f(1.0, 1.0, 0.0)
     glPushMatrix()
-    glTranslatef(0.0, 3.5, 0.0)  # Altura del aro
-    glTranslatef(0.0, 0.0, 0.0)  # Mueve el aro hacia adelante (ajusta el valor según sea necesario)
-    glRotatef(90, 1, 0, 0)  # Girar para hacer un círculo
-    glutSolidTorus(0.1, 0.3, 20, 20)  # Aro
+    glTranslatef(0.0, 3.5, 0.0)
+    glTranslatef(0.0, 0.0, 0.0) 
+    glRotatef(90, 1, 0, 0)
+    glutSolidTorus(0.1, 0.3, 20, 20) 
     glPopMatrix()
 
 def draw_backboard(x_position):
-    # Dibujar un cuadrado blanco detrás del aro
-    glColor3f(1.0, 1.0, 1.0)  # Color blanco
+    glColor3f(1.0, 1.0, 1.0)
     glPushMatrix()
-    glTranslatef(x_position, 4.0, 0.0)  # Ajustar la posición detrás del aro
-    glRotatef(90, 0.0, 1.0, 0.0)  # Rotar 90 grados alrededor del eje Y
-    glScalef(1.5, 1.0, 0.1)  # Tamaño del cuadrado
-    glutSolidCube(1)  # Dibujar el cuadrado
+    glTranslatef(x_position, 4.0, 0.0) 
+    glRotatef(90, 0.0, 1.0, 0.0)
+    glScalef(1.5, 1.0, 0.1) 
+    glutSolidCube(1)
     glPopMatrix()
 
 def draw_walls():
-    # Color azul medio grisáceo para las paredes
     glColor3f(0.5, 0.6, 0.7)
-
-    # Actualizar posiciones y escalas de las paredes
     wall_positions = [
-        (0.0, 1.0, -15.0),  # Pared trasera
-        (0.0, 1.0, 8.0),    # Pared delantera (ajustada para coincidir con el piso)
-        (-18.0, 1.0, -3.5),  # Pared izquierda (ajustada a la mitad de la altura del piso)
-        (18.0, 1.0, -5)    # Pared derecha (ajustada a la mitad de la altura del piso)
+        (0.0, 1.0, -15.0),  
+        (0.0, 1.0, 8.0),  
+        (-18.0, 1.0, -3.5), 
+        (18.0, 1.0, -5) 
     ]
     wall_scales = [
-        (36.0, 2.0, 0.4),   # Pared trasera
-        (36.0, 2.0, 0.4),   # Pared delantera (ajustada)
-        (0.4, 2.0, 23.0),   # Pared izquierda
-        (0.4, 2.0, 20.0)    # Pared derecha
+        (36.0, 2.0, 0.4),   
+        (36.0, 2.0, 0.4),
+        (0.4, 2.0, 23.0), 
+        (0.4, 2.0, 20.0)
     ]
-    
     for position, scale in zip(wall_positions, wall_scales):
         glPushMatrix()
         glTranslatef(*position)
@@ -93,199 +85,161 @@ def draw_walls():
         glPopMatrix()
 
 def draw_rectangle():
-    glColor3f(0.75, 0.75, 0.75)  # Color gris
+    glColor3f(0.75, 0.75, 0.75) 
     glBegin(GL_QUADS)
-    # Vértices del rectángulo
-    glVertex3f(-14, 0.02, -3.0)  # Esquina inferior izquierda
-    glVertex3f(7.0, 0.02, -3.0)   # Esquina inferior derecha
-    glVertex3f(7.0, 0.02, 3.0)    # Esquina superior derecha
-    glVertex3f(-14, 0.02, 3.0)   # Esquina superior izquierda
+    glVertex3f(-14, 0.02, -3.0) 
+    glVertex3f(7.0, 0.02, -3.0)
+    glVertex3f(7.0, 0.02, 3.0) 
+    glVertex3f(-14, 0.02, 3.0) 
     glEnd()
 
 def draw_rectangle_green():
-    glColor3f(0.0, 0.75, 0.0)  # Color gris
+    glColor3f(0.0, 0.75, 0.0)
     glBegin(GL_QUADS)
-    # Vértices del rectángulo
-    glVertex3f(-28, 0.01, -5.0)  # Esquina inferior izquierda
-    glVertex3f(7.0, 0.01, -5.0)   # Esquina inferior derecha
-    glVertex3f(7.0, 0.01, 3.0)    # Esquina superior derecha
-    glVertex3f(-28, 0.01, 3.0)   # Esquina superior izquierda
+    glVertex3f(-28, 0.01, -5.0) 
+    glVertex3f(7.0, 0.01, -5.0) 
+    glVertex3f(7.0, 0.01, 3.0)
+    glVertex3f(-28, 0.01, 3.0)  
     glEnd()
 
 def draw_lines():
-    glLineWidth(3.0)  # Grosor de 3 píxeles para el contorno
-    glColor3f(1.0, 1.0, 1.0)  # Color blanco para las líneas
+    glLineWidth(3.0)
+    glColor3f(1.0, 1.0, 1.0) 
     glBegin(GL_LINES)
-
-    # Líneas desde los extremos del contorno hacia el lado opuesto de las canastas
-    glVertex3f(0, 0.0, 7.0)  # Punto inicial en el lado izquierdo del rectángulo
-    glVertex3f(0, 0.0, 2.0)  # Extensión hacia abajo, lejos del rectángulo
-
-    glVertex3f(0, 0.0, -2.0)   # Punto inicial en el lado derecho del rectángulo
-    glVertex3f(0, 0.0, -7.0)  # Extensión hacia abajo, lejos del rectángulo
-
+    glVertex3f(0, 0.0, 7.0)
+    glVertex3f(0, 0.0, 2.0)
+    glVertex3f(0, 0.0, -2.0)
+    glVertex3f(0, 0.0, -7.0)
     glEnd()
 
 def draw_floor():
-    # Dibujar el piso rectangular
-    glColor3f(0.5, 0.5, 0.65)  # Color gris
+    glColor3f(0.5, 0.5, 0.65)
     glBegin(GL_QUADS)
-    glVertex3f(-18.0, 0.0, -15.0)  # Ajusta estos valores para el tamaño rectangular
+    glVertex3f(-18.0, 0.0, -15.0) 
     glVertex3f(18.0, 0.0, -15.0)
     glVertex3f(18.0, 0.0, 8.0)
     glVertex3f(-18.0, 0.0, 8.0)
     glEnd()
 
 def draw_rectangle_outline():
-    glLineWidth(3.0)  # Grosor de 3 píxeles para el contorno
-    glColor3f(1.0, 1.0, 0.0)  # Color blanco para el contorno
-    glBegin(GL_LINE_LOOP)  # Usar LINE_LOOP para cerrar el contorno
-    glVertex3f(-12.0, 0.0, -4.0)  # Esquina inferior izquierda
-    glVertex3f(12.0, 0.0, -4.0)   # Esquina inferior derecha
-    glVertex3f(12.0, 0.0, 4.0)    # Esquina superior derecha
-    glVertex3f(-12.0, 0.0, 4.0)   # Esquina superior izquierda
+    glLineWidth(3.0) 
+    glColor3f(1.0, 1.0, 0.0)  
+    glBegin(GL_LINE_LOOP) 
+    glVertex3f(-12.0, 0.0, -4.0) 
+    glVertex3f(12.0, 0.0, -4.0)   
+    glVertex3f(12.0, 0.0, 4.0)   
+    glVertex3f(-12.0, 0.0, 4.0) 
     glEnd()
 
 def draw_rectangle_outline2():
-    glLineWidth(4.0)  # Grosor de 3 píxeles para el contorno
-    glColor3f(1.0, 1.0, 1.0)  # Color blanco para el contorno
-    glBegin(GL_LINE_LOOP)  # Usar LINE_LOOP para cerrar el contorno
-    glVertex3f(-14.5, 0.0, -7.0)  # Esquina inferior izquierda
-    glVertex3f(14.5, 0.0, -7.0)   # Esquina inferior derecha
-    glVertex3f(14.5, 0.0, 7.0)    # Esquina superior derecha
-    glVertex3f(-14.5, 0.0, 7.0)   # Esquina superior izquierda
+    glLineWidth(4.0)  
+    glColor3f(1.0, 1.0, 1.0)  
+    glBegin(GL_LINE_LOOP) 
+    glVertex3f(-14.5, 0.0, -7.0)  
+    glVertex3f(14.5, 0.0, -7.0)   
+    glVertex3f(14.5, 0.0, 7.0)    
+    glVertex3f(-14.5, 0.0, 7.0)  
     glEnd()
 
 def draw_black_cubes_and_pyramid():
-    # Color negro para el cubo y la pirámide
-    glColor3f(0.0, 0.0, 0.0)  # Color negro
-
-    # Dibuja el cubo en la base del soporte del aro
+    glColor3f(0.0, 0.0, 0.0)
     glPushMatrix()
-    glTranslatef(0.0, 0.5, 0.0)  # Posición del cubo (ajusta según sea necesario)
-    glutSolidCube(1.0)  # Tamaño del cubo
+    glTranslatef(0.0, 0.5, 0.0)
+    glutSolidCube(1.0) 
     glPopMatrix()
-
-    # Dibuja una pirámide encima del cubo
     glBegin(GL_TRIANGLES)
-
     # Cara frontal
-    glVertex3f(0.0, 2.0, 0.0)  # Punta de la pirámide (ajustada a la altura del cubo más la altura de la pirámide)
-    glVertex3f(-0.5, 1.0, -0.5)  # Esquina inferior izquierda
-    glVertex3f(0.5, 1.0, -0.5)  # Esquina inferior derecha
-
+    glVertex3f(0.0, 2.0, 0.0) 
+    glVertex3f(-0.5, 1.0, -0.5)  
+    glVertex3f(0.5, 1.0, -0.5) 
     # Cara derecha
     glVertex3f(0.0, 2.0, 0.0)
     glVertex3f(0.5, 1.0, -0.5)
-    glVertex3f(0.5, 1.0, 0.5)  # Esquina inferior derecha
-
+    glVertex3f(0.5, 1.0, 0.5) 
     # Cara trasera
     glVertex3f(0.0, 2.0, 0.0)
     glVertex3f(0.5, 1.0, 0.5)
-    glVertex3f(-0.5, 1.0, 0.5)  # Esquina inferior izquierda
-
+    glVertex3f(-0.5, 1.0, 0.5) 
     # Cara izquierda
     glVertex3f(0.0, 2.0, 0.0)
     glVertex3f(-0.5, 1.0, 0.5)
-    glVertex3f(-0.5, 1.0, -0.5)  # Esquina inferior izquierda
-
+    glVertex3f(-0.5, 1.0, -0.5) 
     glEnd()
-
     # Dibuja un cubo pequeño en la punta de la pirámide
-    glColor3f(0.0, 0.0, 0.0)  # Color negro
+    glColor3f(0.0, 0.0, 0.0) 
     glPushMatrix()
-    glTranslatef(0.0, 1.8, 0.0)  # Posición en la punta de la pirámide
-    glutSolidCube(0.3)  # Tamaño del cubo pequeño, ajustado a 0.3
+    glTranslatef(0.0, 1.8, 0.0)  
+    glutSolidCube(0.3) 
     glPopMatrix()
 
 def draw_yellow_squares():
-    # Color amarillo para los cuadrados
-    square_size = 4.0  # Tamaño del cuadrado
-
-    # Dibujar cuadrado a la izquierda
-    glColor3f(1.0, 1.0, 0.0)  # Color amarillo
+    square_size = 4.0  
+    glColor3f(1.0, 1.0, 0.0)
     glPushMatrix()
-    glTranslatef(-12.5, 0.0, 0.0)  # Ajustar la posición de manera independiente
-    glScalef(square_size, 0.1, square_size)  # Tamaño del cuadrado
-    glutSolidCube(1)  # Dibujar el cuadrado
+    glTranslatef(-12.5, 0.0, 0.0) 
+    glScalef(square_size, 0.1, square_size)
+    glutSolidCube(1)
     glPopMatrix()
-
     # Dibujar cuadrado a la derecha
-    glColor3f(1.0, 1.0, 0.0)  # Color amarillo
+    glColor3f(1.0, 1.0, 0.0) 
     glPushMatrix()
-    glTranslatef(12.5, 0.0, 0.0)  # Ajustar la posición de manera independiente
-    glScalef(square_size, 0.1, square_size)  # Tamaño del cuadrado
-    glutSolidCube(1)  # Dibujar el cuadrado
+    glTranslatef(12.5, 0.0, 0.0) 
+    glScalef(square_size, 0.1, square_size)  
+    glutSolidCube(1)
     glPopMatrix()
 
 def draw_stairs():
-    # Dibujar la banqueta en forma de escalera del lado derecho
     stair_width = 7.5
     stair_depth = 0.5
     stair_height = 0.2
     num_steps = 5
-    
-    # Color de la banqueta
-    glColor3f(0.5, 0.5, 0.5)  # Color gris
-
+    glColor3f(0.5, 0.5, 0.5) 
     for i in range(num_steps):
         glPushMatrix()
-        # Ajustar la posición para que esté pegada a la pared derecha
-        glTranslatef(-3, 0.1 + (i * stair_height), -10 - (i * stair_depth))  # Posición de cada escalón
-        glScalef(stair_width, stair_height, stair_depth)  # Tamaño de cada escalón
-        glutSolidCube(1)  # Dibujar el escalón
+        glTranslatef(-3, 0.1 + (i * stair_height), -10 - (i * stair_depth))
+        glScalef(stair_width, stair_height, stair_depth)
+        glutSolidCube(1) 
         glPopMatrix()
-
     # Dibujar el techo
     roof_width = stair_width
     roof_depth = stair_depth * 6
-    roof_height = 0.1  # Altura del techo
-
-    glColor3f(0.75, 0.75, 0.75)  # Color gris claro para el techo
+    roof_height = 0.1  
+    glColor3f(0.75, 0.75, 0.75) 
     glPushMatrix()
-    # Ajustar la posición del techo (elevarlo)
-    glTranslatef(-3, 1.1 + (num_steps * stair_height) + roof_height + 0.5, -9 - (num_steps * stair_depth))  # Colocar el techo
-    glScalef(roof_width, roof_height, roof_depth)  # Tamaño del techo
-    glutSolidCube(1)  # Dibujar el techo
+    glTranslatef(-3, 1.1 + (num_steps * stair_height) + roof_height + 0.5, -9 - (num_steps * stair_depth))
+    glScalef(roof_width, roof_height, roof_depth) 
+    glutSolidCube(1) 
     glPopMatrix()
-
     # Dibujar los soportes
     support_width = 0.1
     support_height = 2.7
-    support_depth = 0.1  # Añadir el grosor para los soportes
-
-    glColor3f(0.5, 0.5, 0.5)  # Color gris para los soportes
-    for i in [-1, 1]:  # Para dibujar dos soportes
+    support_depth = 0.1  
+    glColor3f(0.5, 0.5, 0.5)  
+    for i in [-1, 1]: 
         glPushMatrix()
-        # Ajustar la posición de los soportes
-        glTranslatef(-3 - (roof_width / 2) * i, 0.4 + (num_steps * stair_height), -10 - (num_steps * stair_depth))  # Colocar cada soporte
-        glScalef(support_width, support_height, support_depth)  # Tamaño del soporte
-        glutSolidCube(1)  # Dibujar el soporte
+        glTranslatef(-3 - (roof_width / 2) * i, 0.4 + (num_steps * stair_height), -10 - (num_steps * stair_depth)) 
+        glScalef(support_width, support_height, support_depth) 
+        glutSolidCube(1) 
         glPopMatrix()
 
 def draw_scene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
-
-    # Mover cámara
     glTranslatef(0.0, 0.0, -camera_distance)
     glRotatef(camera_angle_x, 1.0, 0.0, 0.0)
     glRotatef(camera_angle_y, 0.0, 1.0, 0.0)
 
-    # Dibujar el piso
     draw_floor()
-
-    # Dibujar paredes
     draw_walls()
 
     glPushMatrix()
-    glTranslatef(-4, 0, -10)  # Desplaza al centro del rectángulo (0, 0.5)
-    draw_rectangle()  # Dibuja el rectángulo
+    glTranslatef(-4, 0, -10) 
+    draw_rectangle() 
     glPopMatrix()
 
     glPushMatrix()
-    glTranslatef(10, 0, -10)  # Desplaza al centro del rectángulo (0, 0.5)
-    draw_rectangle_green()  # Dibuja el rectángulo
+    glTranslatef(10, 0, -10) 
+    draw_rectangle_green() 
     glPopMatrix()
 
     draw_rectangle_outline()
@@ -314,68 +268,58 @@ def draw_scene():
     draw_backboard(1)  # Cuadrado blanco detrás
     glPopMatrix()
 
-    # Dibujar cuadrados amarillos debajo de los postes
     draw_yellow_squares()
-
-    # Dibujar la banqueta
     draw_stairs()
 
-    # Dibujar los medio círculos
     glPushMatrix()
-    glTranslatef(10.5, 0.0, 0.0)  # Mover a la derecha
-    glRotatef(90, 1.0, 0.0, 0.0)  # Poner el medio círculo en el plano horizontal 
+    glTranslatef(10.5, 0.0, 0.0) 
+    glRotatef(90, 1.0, 0.0, 0.0)  
     glRotatef(180, 0.0, 0.0, 1.0)
-    draw_half_circle(1.5, 100)  # Dibujar el primer medio círculo
+    draw_half_circle(1.5, 100)  
     glPopMatrix()
 
-    # Segundo medio círculo en el centro
     glPushMatrix()
-    glTranslatef(14.5, 0.1, 0.0)  # Mantener en el centro
-    glRotatef(90, 1.0, 0.0, 0.0)  # Poner el medio círculo en el plano horizontal  
+    glTranslatef(14.5, 0.1, 0.0) 
+    glRotatef(90, 1.0, 0.0, 0.0)  
     glRotatef(180, 0.0, 0.0, 1.0)
-    draw_half_circle(0.7, 100)  # Dibujar el segundo medio círculo
+    draw_half_circle(0.7, 100) 
     glPopMatrix()
 
-    # Tercer medio círculo a la izquierda
     glPushMatrix()
-    glTranslatef(14.5, 0.0, 0.0)  # Mover a la izquierda
-    glRotatef(90, 1.0, 0.0, 0.0)  # Poner el medio círculo en el plano horizontal
+    glTranslatef(14.5, 0.0, 0.0)  
+    glRotatef(90, 1.0, 0.0, 0.0)  
     glRotatef(180, 0.0, 0.0, 1.0)
-    draw_half_circle(6, 100)  # Dibujar el tercer medio círculo
+    draw_half_circle(6, 100) 
     glPopMatrix()
     
-    # Dibujar los medio círculos
     glPushMatrix()
-    glTranslatef(-10.5, 0.0, 0.0)  # Mover a la derecha
-    glRotatef(90, 1.0, 0.0, 0.0)  # Poner el medio círculo en el plano horizontal 
+    glTranslatef(-10.5, 0.0, 0.0)  
+    glRotatef(90, 1.0, 0.0, 0.0)  
     glRotatef(0, 0.0, 0.0, 1.0)
-    draw_half_circle(1.5, 100)  # Dibujar el primer medio círculo
-    glPopMatrix()
-
-    # Segundo medio círculo en el centro
-    glPushMatrix()
-    glTranslatef(-14.5, 0.1, 0.0)  # Mantener en el centro
-    glRotatef(90, 1.0, 0.0, 0.0)  # Poner el medio círculo en el plano horizontal  
-    glRotatef(0, 0.0, 0.0, 1.0)
-    draw_half_circle(0.7, 100)  # Dibujar el segundo medio círculo
-    glPopMatrix()
-
-    # Tercer medio círculo a la izquierda
-    glPushMatrix()
-    glTranslatef(-14.5, 0.0, 0.0)  # Mover a la izquierda
-    glRotatef(90, 1.0, 0.0, 0.0)  # Poner el medio círculo en el plano horizontal
-    glRotatef(0, 0.0, 0.0, 1.0)
-    draw_half_circle(6, 100)  # Dibujar el tercer medio círculo
+    draw_half_circle(1.5, 100)  
     glPopMatrix()
 
     glPushMatrix()
-    glTranslatef(0.0, 0.0, 0.0)  # Posición del círculo
+    glTranslatef(-14.5, 0.1, 0.0)  
+    glRotatef(90, 1.0, 0.0, 0.0)  
+    glRotatef(0, 0.0, 0.0, 1.0)
+    draw_half_circle(0.7, 100)  
+    glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(-14.5, 0.0, 0.0) 
+    glRotatef(90, 1.0, 0.0, 0.0)  
+    glRotatef(0, 0.0, 0.0, 1.0)
+    draw_half_circle(6, 100)  
+    glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(0.0, 0.0, 0.0)  
     glRotatef(90, 1.0, 0.0, 0.0)
-    glColor3f(1.0, 1.0, 1.0)  # Color rojo para el círculo
-    draw_circle(2.0, 100)  # Dibujar un círculo con radio 2.0 y 100 segmentos
+    glColor3f(1.0, 1.0, 1.0)  
+    draw_circle(2.0, 100)  
     glPopMatrix()
-
-    glutSwapBuffers()  # Mostrar la escena
+    glutSwapBuffers() 
 
 def mouse_motion(x, y):
     global camera_angle_x, camera_angle_y, mouse_x, mouse_y
@@ -415,7 +359,6 @@ def keyboard(key, x, y):
     elif key == b'e':
         camera_angle_x += 5  # Rotar hacia abajo
     glutPostRedisplay()
-
 
 def main():
     glutInit()
