@@ -37,7 +37,7 @@ def draw_circle(radius, segments):
         glVertex2f(x, y)  # Añadir vértice
     glEnd()
 
-def draw_basket():
+def draw_Soporte():
     # Dibujar el soporte de la canasta
     glColor3f(1.0, 1.0, 0.0)  # Color amarillo para el soporte
     glPushMatrix()
@@ -45,17 +45,17 @@ def draw_basket():
     glScalef(0.1, 3.0, 0.1)  # Escalar el soporte (ancho, alto, profundo)
     glutSolidCube(1)  # Dibuja un cubo (que se ha escalado a un prisma)
     glPopMatrix()
+    # Dibujar el cubo y prisma negros
+    draw_black_cubes_and_pyramid()  # Llama a la función para dibujar el cubo y prisma
 
-    # Dibujar el aro de la canasta
+def draw_aro():
     glColor3f(1.0, 1.0, 0.0)  # Color amarillo para el aro
     glPushMatrix()
     glTranslatef(0.0, 3.5, 0.0)  # Altura del aro
-    glTranslatef(0.5, 0.0, 0.0)  # Mueve el aro hacia adelante (ajusta el valor según sea necesario)
+    glTranslatef(0.0, 0.0, 0.0)  # Mueve el aro hacia adelante (ajusta el valor según sea necesario)
     glRotatef(90, 1, 0, 0)  # Girar para hacer un círculo
     glutSolidTorus(0.1, 0.3, 20, 20)  # Aro
     glPopMatrix()
-    # Dibujar el cubo y prisma negros
-    draw_black_cubes_and_pyramid()  # Llama a la función para dibujar el cubo y prisma
 
 def draw_backboard(x_position):
     # Dibujar un cuadrado blanco detrás del aro
@@ -294,13 +294,23 @@ def draw_scene():
 
     glPushMatrix()
     glTranslatef(-16, 0.0, 0.0)  # Canasta izquierda
-    draw_basket()
-    draw_backboard(-0.1)  # Cuadrado blanco detrás
+    draw_Soporte()
     glPopMatrix()
 
     glPushMatrix()
     glTranslatef(16, 0.0, 0.0)  # Canasta derecha
-    draw_basket()
+    draw_Soporte()
+    glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(-15.6, 0.0, 0.0)  # Canasta derecha
+    draw_aro()
+    draw_backboard(-1)  # Cuadrado blanco detrás
+    glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(15.6, 0.0, 0.0)  # Canasta derecha
+    draw_aro()
     draw_backboard(1)  # Cuadrado blanco detrás
     glPopMatrix()
 
