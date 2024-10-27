@@ -13,23 +13,22 @@ def init():
     glClearColor(0.5, 0.7, 0.9, 1.0)  # Color de fondo
     glEnable(GL_DEPTH_TEST)
 
-def draw_walls():
+def draw_paredes():
     glColor3f(0.0, 0.0, 0.0)  # Color de las paredes
     wall_positions = [
         (0.0, 1.0, -75.0),  # Pared frontal
         (20.0, 1.0, 40.0),  # Pared trasera
         (-70.0, 3.6, 40.0),  # Pared inclinada hacia arriba
-        (-90.0, 6.2, -17.5), # Pared izquierda
+        (-90.0, 3.5, -17.5), # Pared izquierda
         (90.0, 1.0, -17.5)   # Pared derecha
     ]
     wall_scales = [
         (180.0, 1.0, 1.0),   # Pared frontal
         (140.0, 1.0, 1.0),   # Pared trasera
         (40.0, 1.0, 1.0),    # Pared inclinada
-        (1.0, 1.0, 116.0),   # Pared izquierda
+        (1.0, 6.0, 116.0),   # Pared izquierda
         (1.0, 1.0, 116.0)    # Pared derecha
     ]
-    
     for i, (position, scale) in enumerate(zip(wall_positions, wall_scales)):
         glPushMatrix()
         glTranslatef(*position)  # Posicionar la pared
@@ -42,8 +41,6 @@ def draw_walls():
 
 def draw_contorno_structure():
     glColor3f(0.0, 0.0, 0.0)  # Color del contorno negro
-
-    # Posiciones y escalas de los segmentos del contorno del rectángulo
     contorno_positions = [
         (0.0, 0.1, -4.0),   # Segmento inferior
         (0.0, 0.1, 4.0),    # Segmento superior
@@ -56,8 +53,6 @@ def draw_contorno_structure():
         (0.5, 0.7, 8.5),    # Escala del segmento izquierdo
         (0.5, 0.7, 8.5)     # Escala del segmento derecho
     ]
-    
-    # Dibuja cada segmento del contorno
     for position, scale in zip(contorno_positions, contorno_scales):
         glPushMatrix()
         glTranslatef(*position)
@@ -67,8 +62,6 @@ def draw_contorno_structure():
 
 def draw_centro_structure():
     glColor3f(0.0, 0.0, 0.0)  # Color negro
-
-    # Definir posiciones y escalas para los segmentos del rectángulo central
     centro_positions = [
         (0.0, 0.1, -4.0),   # Segmento inferior
         (0.0, 0.1, 4.0),    # Segmento superior
@@ -81,8 +74,6 @@ def draw_centro_structure():
         (0.5, 0.7, 8.0),    # Escala del segmento izquierdo
         (0.5, 0.7, 8.0)     # Escala del segmento derecho
     ]
-
-    # Dibuja cada segmento del rectángulo central
     for position, scale in zip(centro_positions, centro_scales):
         glPushMatrix()
         glTranslatef(*position)
@@ -113,8 +104,8 @@ def draw_block(position, scale, color=(1.0, 1.0, 1.0)):  # Color blanco por defe
     glutSolidCube(1)         # Dibuja un cubo sólido
     glPopMatrix()
 
-def draw_rectangular_plane(position, scale):
-    glColor3f(0.5, 0.5, 0.5)  # Color gris
+def draw_piso_entrada(position, scale):
+    glColor3f(0.75, 0.75, 0.75)  # Color gris
     glPushMatrix()
     glTranslatef(*position)    # Posicionar el plano
     glScalef(*scale)           # Escalar el plano en X y Z
@@ -126,7 +117,76 @@ def draw_rectangular_plane(position, scale):
     glEnd()
     glPopMatrix()
 
-    
+def draw_piso_general(position, scale):
+    glColor3f(0.75, 0.75, 0.75)  # Color gris
+    glPushMatrix()
+    glTranslatef(*position)    # Posicionar el plano
+    glScalef(*scale)           # Escalar el plano en X y Z
+    glBegin(GL_QUADS)
+    glVertex3f(-1.0, 0.0, -1.0)  # Esquina inferior izquierda
+    glVertex3f(1.0, 0.0, -1.0)   # Esquina inferior derecha
+    glVertex3f(1.0, 0.0, 1.0)    # Esquina superior derecha
+    glVertex3f(-1.0, 0.0, 1.0)   # Esquina superior izquierda
+    glEnd()
+    glPopMatrix()
+
+def draw_postes():
+    glColor3f(0.0, 0.0, 0.0)  # Color de los postes
+    # Listas de posiciones y escalas para los postes
+    positions = [
+        (-85.0, 11.5, -7.0),
+        (-84.0, 11.5, -17.0),  # Cambiado para posicionar un poco a la derecha
+        (-84.5, 11.5, -12.0),  # Cambiado para posicionar un poco más a la derecha
+        (-84.5, 13, -13.0),
+        (-90.0, 13.5, 10.0),
+        (-90.0, 13.5, 20.0),   # Cambiado para posicionar un poco a la derecha
+        (-90.0, 13.5, 30.0),   # Cambiado para posicionar un poco más a la derecha
+        (-90.0, 13.5, 39.5),
+        (-90.0, 13.5, -50.0),   # Cambiado para posicionar un poco a la izquierda
+        (-90.0, 13.5, -45.0),  # Cambiado para posicionar un poco más a la izquierda
+        (-90.0, 13.5, -40.0),
+        (-90.0, 13.5, -35.0),   # Cambiado para posicionar un poco a la izquierda
+        (-90.0, 13.5, -30.0)   # Cambiado para posicionar un poco más a la izquierda
+    ]
+    scales = [
+        (0.5, 10.0, 1.0),
+        (0.5, 10.0, 1.0),
+        (0.5, 10.0, 1.0),
+        (0.5, 1.0, 24.5),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0)
+    ]
+    # Dibujar cada poste
+    for pos, scale in zip(positions, scales):
+        glPushMatrix()
+        glTranslatef(*pos)  # Posicionar el poste
+        glScalef(*scale)    # Escalar el poste
+        glutSolidCube(1)     # Dibujar el cubo que representa el poste
+        glPopMatrix()
+
+def draw_stairs():
+    stair_width = 25
+    stair_depth = 1
+    stair_height = 0.6  # Escalones más altos
+    num_steps = 10   # Menos escalones necesarios
+    glColor3f(0.85, 0.85, 0.85) 
+
+    for i in range(num_steps):
+        glPushMatrix()
+        glRotatef(90,0,1,0)
+        glTranslatef(12.5, 1 + (i * stair_height), -72.7 - (i * stair_depth))
+        glScalef(stair_width, stair_height, stair_depth)
+        glutSolidCube(1) 
+        glPopMatrix()
+
+
 def draw_scene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
@@ -134,22 +194,24 @@ def draw_scene():
     glRotatef(camera_angle_x, 1.0, 0.0, 0.0)
     glRotatef(camera_angle_y, 0.0, 1.0, 0.0)
 
-    draw_walls()  # Dibuja las paredes
-    # Bloques blancos
+    draw_paredes()  # Dibuja las paredes
+    draw_postes()
+    draw_stairs()
+
     draw_block((-90, 9.5, -40.0), (0.5, 6.0, 30.0))
     draw_block((-90.0, 9.5, 20.0), (0.5, 6.0, 40.0))
-    draw_block((-87.7, 10.3, -25.0), (5, 9, 0.5))
-    draw_block((-87.7, 10.3, 0.0), (5, 9, 0.5))
+    draw_block((-86.2, 8.5, -25.0), (8, 16, 0.5))
+    draw_block((-86.2, 8.5, 0.0), (8, 16, 0.5))
     draw_block((-90, 15.5, -40.0), (0.5, 2, 30.0))
     draw_block((-90.0, 15.5, 20.0), (0.5, 2, 40.0))
     draw_block((-90, 11.5, -65.0), (0.5, 10, 20.0))
     draw_block((90.0, 7, -17.0), (0.5, 13, 116.0))
     draw_block((0.0, 9, -75.0), (180, 15, 0.5))
-
-    # Bloque amarillo
     draw_block((-90.0, 17.5, -12.5), (0.5,6.0, 25.5), (1.0, 1.0, 0.0))  # Color amarillo
+    draw_block((-86.2, 16.5, -12.5), (7, 0.5, 25)) #techo de puerta principal
 
-    draw_rectangular_plane((-87.5, 6.5, -12.5), (2.5, 1.0, 13))  # Escala para ajustar el tamaño deseado
+    draw_piso_entrada((-86.2, 6.5, -12.5), (4, 1.0, 13))
+    draw_piso_general((0, 0.5, -17.5), (90, 1.0, 58))
 
     glPushMatrix()
     glTranslatef(0, 5, 39.5) 
@@ -163,7 +225,6 @@ def draw_scene():
     draw_centro_structure()
     glPopMatrix()
 
-    # Dibuja los soportes
     glPushMatrix()
     glTranslatef(10, 0.0, 40) 
     draw_multiple_soportes(160, 0.5, 6.0)  # Dibuja 5 soportes con separación de 1.5 unidades
@@ -184,7 +245,6 @@ def draw_scene():
     glTranslatef(-1, 0, 40)
     draw_multiple_soportes(5, 0.5, 7.5)  # Dibuja 5 soportes con separación de 0.5 y altura de 6.0
     glPopMatrix()
-
     glutSwapBuffers()
 
 def mouse_motion(x, y):
@@ -220,10 +280,6 @@ def keyboard(key, x, y):
         camera_angle_y -= 5  # Rotar a la izquierda
     elif key == b'd':
         camera_angle_y += 5  # Rotar a la derecha
-    elif key == b'q':
-        camera_angle_x -= 5  # Rotar hacia arriba
-    elif key == b'e':
-        camera_angle_x += 5  # Rotar hacia abajo
     glutPostRedisplay()
 
 def main():
