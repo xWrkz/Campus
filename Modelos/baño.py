@@ -12,7 +12,7 @@ last_mouse_y = 0
 mouse_left_down = False
 
 def init():
-    glClearColor(0.0, 0.0, 0.0, 1.0)
+    glClearColor(0.5, 0.7, 1.0, 1.0)  # Cambiar el color de fondo a celeste
     glEnable(GL_DEPTH_TEST)
 
 def draw_floor():
@@ -20,14 +20,14 @@ def draw_floor():
     glColor3f(1.0, 1.0, 1.0)  # Color blanco para el suelo
 
     # Definir las coordenadas del suelo como un rectángulo
-    glVertex3f(-10.0, 0.0, -10.0)
-    glVertex3f( 10.0, 0.0, -10.0)
-    glVertex3f( 10.0, 0.0,  10.0)
-    glVertex3f(-10.0, 0.0,  10.0)
+    glVertex3f(-15.0, 0.0, -15.0)  # Aumentar tamaño
+    glVertex3f( 15.0, 0.0, -15.0)  # Aumentar tamaño
+    glVertex3f( 15.0, 0.0,  15.0)  # Aumentar tamaño
+    glVertex3f(-15.0, 0.0,  15.0)  # Aumentar tamaño
 
     glEnd()
 
-def draw_wall(x1, z1, x2, z2, height=3.0, color=(0.6, 0.6, 0.6)):
+def draw_wall(x1, z1, x2, z2, height=4.0, color=(0.6, 0.8, 1.0)):  # Cambiar a celeste
     """Dibujar una pared entre dos puntos."""
     glColor3f(*color)
     glBegin(GL_QUADS)
@@ -43,26 +43,25 @@ def draw_wall(x1, z1, x2, z2, height=3.0, color=(0.6, 0.6, 0.6)):
 def draw_cube_room():
     """Dibujar el cubo que representa la sala."""
     # Dibujar las paredes del cubo
-    draw_wall(-2.0, -2.0, 2.0, -2.0)  # Pared frontal (con la puerta)
-    draw_wall(2.0, -2.0, 2.0, 2.0)    # Pared lateral derecha
-    draw_wall(-2.0, -2.0, -2.0, 2.0)  # Pared lateral izquierda
-    draw_wall(-2.0, 2.0, 2.0, 2.0)    # Pared trasera
-    draw_wall(-2.0, 2.0, -2.0, -2.0, 0.05, color=(0.5, 0.3, 0.2)) # Suelo del cubo
+    draw_wall(-3.0, -3.0, 3.0, -3.0)  # Pared frontal (con la puerta)
+    draw_wall(3.0, -3.0, 3.0, 3.0)    # Pared lateral derecha
+    draw_wall(-3.0, -3.0, -3.0, 3.0)  # Pared lateral izquierda
+    draw_wall(-3.0, 3.0, 3.0, 3.0)    # Pared trasera
+    draw_wall(-3.0, 3.0, -3.0, -3.0, 0.05, color=(0.5, 0.3, 0.2))  # Suelo del cubo
 
 def draw_internal_divisions():
     """Dibujar las divisiones internas para separar las partes."""
     # División para separar inodoros del pasillo
-    draw_wall(-2.0, 0.5, 2.0, 0.5)
-    # La tercera división no tendrá pared, eliminada según la solicitud.
+    draw_wall(-3.0, 0.5, 3.0, 0.5)  # Aumentar tamaño
 
 def draw_toilets():
     """Dibujar 3 inodoros en la primera parte del cubo como rectángulos 3D negros."""
     glColor3f(0.0, 0.0, 0.0)  # Color negro para los inodoros
     for i in range(3):
-        x_offset = -1.5 + i * 1.5  # Espaciados
+        x_offset = -2.0 + i * 2.0  # Aumentar espaciado
         glPushMatrix()
-        glTranslatef(x_offset, 0.5, 1.5)  # Posicionar los inodoros (encima del suelo)
-        glScalef(0.5, 1.0, 0.5)  # Escalar para crear inodoros más anchos y altos
+        glTranslatef(x_offset, 0.5, 2.0)  # Posicionar los inodoros (encima del suelo)
+        glScalef(0.75, 1.5, 0.75)  # Aumentar tamaño
         glutSolidCube(1.0)  # Dibujar el inodoro como un cubo escalado
         glPopMatrix()
 
@@ -70,10 +69,10 @@ def draw_sinks():
     """Dibujar tres lavaderos en el cubo."""
     glColor3f(0.8, 0.8, 0.8)  # Color gris claro para los lavaderos
     for i in range(3):
-        x_offset = -1.5 + i * 1.5  # Posicionar los lavaderos
+        x_offset = -2.0 + i * 2.0  # Aumentar espaciado
         glPushMatrix()
-        glTranslatef(x_offset, 0.5, -1.5)  # Posicionar los lavaderos encima del suelo
-        glScalef(1.0, 0.5, 0.5)  # Escalar para hacer los lavaderos más anchos
+        glTranslatef(x_offset, 0.5, -2.0)  # Posicionar los lavaderos encima del suelo
+        glScalef(1.5, 0.75, 0.75)  # Aumentar tamaño
         glutSolidCube(1.0)  # Dibujar el lavadero como un cubo escalado
         glPopMatrix()
 
@@ -143,6 +142,7 @@ def mouse_wheel(button, direction, x, y):
         cam_radius += 1.0  # Alejar
     cam_radius = max(5.0, min(cam_radius, 50.0))  # Limitar el zoom
     glutPostRedisplay()
+
 # Iniciacion del codigo
 def main():
     glutInit()
@@ -159,4 +159,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
