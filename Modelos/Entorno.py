@@ -138,12 +138,12 @@ def draw_building():
     glutSolidCube(1)
     glPopMatrix()
 
-def draw_vertical_path():
+def draw_vertical_path(offset_x):
     # Color del camino vertical (gris claro)
     glColor3f(0.7, 0.7, 0.7)
     glPushMatrix()
-    glTranslatef(-5.0, 2.5, 0.0)  # Cambiar en el eje X para acercarlo a los edificios
-    glScalef(6.0, 0.05, 90.0)  # Mantener el tamaño del camino vertical
+    glTranslatef(offset_x, 2.5, 0)  # Cambiar en el eje X para acercarlo a los edificios
+    glScalef(10, 0.05, 90.0)  # Mantener el tamaño del camino vertical
     glutSolidCube(1)
     glPopMatrix()
 
@@ -151,19 +151,28 @@ def draw_horizontal_path(offset_z):
     # Color del camino horizontal (gris claro)
     glColor3f(0.7, 0.7, 0.7)
     glPushMatrix()
-    glTranslatef(0.0, 2.5, offset_z)  # Mover en el eje Z según el parámetro offset_z
-    glScalef(70.0, 0.05, 4.0)  # Camino horizontal más ancho que el vertical
+    glTranslatef(18, 2.5, offset_z)  # Mover en el eje Z según el parámetro offset_z
+    glScalef(40.0, 0.05, 4.0)  # Camino horizontal más ancho que el vertical
     glutSolidCube(1)
     glPopMatrix()
 
+def draw_Upn(position, scale, rotate, color=(1.0, 1.0, 1.0)):  # Color blanco por defecto
+    glColor3f(*color)  # Aplicar el color del bloque
+    glPushMatrix()
+    glRotatef(*rotate)
+    glTranslatef(*position)  # Posicionar el bloque
+    glScalef(*scale)         # Escalar el bloque
+    glutSolidCube(1)         # Dibuja un cubo sólido
+    glPopMatrix()
+    
 def draw_block():
     # Dibuja un bloque largo y alto encima del camino
     glColor3f(0.6, 0.4, 0.2)  # Color marrón para el bloque
     glPushMatrix()
     
     # Posicionar el bloque para que esté alineado con el camino vertical
-    glTranslatef(-5.0, 2.5, 0.0)  # Moverse al lado del camino vertical
-    glScalef(0.5, 1.0, 6.0)  # Tamaño del bloque (alto y largo)
+    glTranslatef(-7.0, 3.5, 0.0)  # Moverse al lado del camino vertical
+    glScalef(1, 0.5, 50.0)  # Tamaño del bloque (alto y largo)
     glutSolidCube(1)
     
     glPopMatrix()
@@ -195,10 +204,17 @@ def draw_scene():
     glVertex3f(100.0, 2.5, 100.0)
     glVertex3f(-100.0, 2.5, 100.0)
     glEnd()
+    
+    glPushMatrix
+    draw_vertical_path(-10)
+    draw_vertical_path(30)
+    glPopMatrix 
 
-    draw_vertical_path()
+    glPushMatrix
     draw_horizontal_path(-9.0)  # Camino horizontal cerca de la parte trasera
     draw_horizontal_path(9.0)
+    glPopMatrix
+    
     draw_block()
     # Dibujar paredes del comedor con ventanas
     glPushMatrix()
@@ -217,6 +233,12 @@ def draw_scene():
     glTranslatef(17.50, 7.5, 20.0)  # Ubicar el edificio en la escena
     draw_building()
     glPopMatrix()
+
+    draw_Upn((-5,3,10),(2,2,3),(0,0,0,0))
+    draw_Upn((-5.5,5,9),(1,5,0.5),(0,0,0,0),(1,1,0))
+    draw_Upn((-5.5,5,9.8),(1,5,0.5),(0,0,0,0),(1,1,0))
+    draw_Upn((-5.5,9.1,6),(1,1.8,0.5),(18,1,0,0),(1,1,0))
+    draw_Upn((-5.5,3.2,11.9),(1,1.8,0.5),(-18,1,0,0),(1,1,0))
 
     glutSwapBuffers()
 
