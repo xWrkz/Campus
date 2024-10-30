@@ -1,6 +1,7 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+import random
 import math
 
 # Tamaño del suelo
@@ -37,9 +38,23 @@ def dibujar_cubo_hueco():
     # Frente
     glBegin(GL_QUADS)
     glVertex3f(-width/2, 0, depth/2)
-    glVertex3f(width/2, 0, depth/2)
-    glVertex3f(width/2, height, depth/2)
+    glVertex3f(13 - 0.5, 0, depth/2)  # Corte para la puerta
+    glVertex3f(13 - 0.5, height, depth/2)  # Corte para la puerta
     glVertex3f(-width/2, height, depth/2)
+    glEnd()
+
+    glBegin(GL_QUADS)
+    glVertex3f(15 - 1.5, 0, depth/2)  # Esquina inferior izquierda de la puerta
+    glVertex3f(15, 0, 15)  # Esquina inferior derecha de la puerta
+    glVertex3f(15, height, 15)  # Esquina superior derecha de la puerta
+    glVertex3f(15 - 1.5, height, depth/2)  # Esquina superior izquierda de la puerta
+    glEnd()
+
+    glBegin(GL_QUADS)
+    glVertex3f(15 - 3, 2, depth/2)  # Esquina inferior izquierda de la puerta
+    glVertex3f(15, 2, 15)  # Esquina inferior derecha de la puerta
+    glVertex3f(15, height, 15)  # Esquina superior derecha de la puerta
+    glVertex3f(15 - 3, height, depth/2)  # Esquina superior izquierda de la puerta
     glEnd()
 
     # Espalda
@@ -66,18 +81,38 @@ def dibujar_cubo_hueco():
     glVertex3f(width/2, height, depth/2)
     glEnd()
 
+def dibujar_pared(x, y, z):
+    glTranslatef(x, y, z)
+    glColor3f(0.5, 0.5, 0.5)  # Color de la pared
+    glBegin(GL_QUADS)
+    glVertex3f(-5, 0, 0.1)  # Esquina inferior izquierda
+    glVertex3f(5, 0, 0.1)   # Esquina inferior derecha
+    glVertex3f(5, 8, 0.1)   # Esquina superior derecha
+    glVertex3f(-5, 8, 0.1)  # Esquina superior izquierda
+    glEnd()
+
 
 def dibujar_mesa():
     glColor3f(0.6, 0.3, 0.1)
+    largo = 2.0
+    ancho = 5.0
+    
+    # Posiciona la mesa en la esquina izquierda
+    x_offset = -11  # Ajusta este valor según sea necesario
+    z_offset = 10  # Ajusta este valor para colocar la mesa en la dirección correcta
+
+    # Dibuja la parte superior de la mesa
     glBegin(GL_QUADS)
-    glVertex3f(-1.5, 1, -1.5)
-    glVertex3f(1.5, 1, -1.5)
-    glVertex3f(1.5, 1, 1.5)
-    glVertex3f(-1.5, 1, 1.5)
+    glVertex3f(x_offset + largo / 2, 1, z_offset - ancho / 2)
+    glVertex3f(x_offset - largo / 2, 1, z_offset - ancho / 2)
+    glVertex3f(x_offset - largo / 2, 1, z_offset + ancho / 2)
+    glVertex3f(x_offset + largo / 2, 1, z_offset + ancho / 2)
     glEnd()
+    
+    # Color de las patas
     glColor3f(0.4, 0.2, 0.1)
-    for x in [-1.4, 1.4]:
-        for z in [-1.4, 1.4]:
+    for x in [x_offset - largo / 2 + 0.1, x_offset + largo / 2 - 0.1]:
+        for z in [z_offset - ancho / 2 + 0.1, z_offset + ancho / 2 - 0.1]:
             glBegin(GL_QUADS)
             glVertex3f(x, 0, z)
             glVertex3f(x + 0.2, 0, z)
@@ -85,16 +120,155 @@ def dibujar_mesa():
             glVertex3f(x, 1, z)
             glEnd()
 
+
+
 def dibujar_puerta():
     glColor3f(0.8, 0.5, 0.3)
     glBegin(GL_QUADS)
-    glVertex3f(-0.5, 0, 2)
-    glVertex3f(0.5, 0, 2)
-    glVertex3f(0.5, 2, 2)
-    glVertex3f(-0.5, 2, 2)
+    glVertex3f(13-0.5, 0, 15)
+    glVertex3f(13+0.5, 0, 15)
+    glVertex3f(13+0.5, 2, 15)
+    glVertex3f(13-0.5, 2, 15)
     glEnd()
 
+def dibujar_estanteria(x, z):
+    glColor3f(0.6, 0.3, 0.1)  # Color de la estantería
+
+    # Dimensiones de la estantería
+    ancho = 2
+    alto = 3
+    profundidad = 0.2
+
+    # Dibuja el cuerpo de la estantería
+    glBegin(GL_QUADS)
+    # Parte frontal
+    glVertex3f(x - ancho, 0, z + profundidad)
+    glVertex3f(x + ancho, 0, z + profundidad)
+    glVertex3f(x + ancho, alto, z + profundidad)
+    glVertex3f(x - ancho, alto, z + profundidad)
+    glEnd()
+
+    # Lados
+    glBegin(GL_QUADS)
+    # Lado izquierdo
+    glVertex3f(x - ancho, 0, z + profundidad)
+    glVertex3f(x - ancho, 0, z - profundidad)
+    glVertex3f(x - ancho, alto, z - profundidad)
+    glVertex3f(x - ancho, alto, z + profundidad)
+    
+    # Lado derecho
+    glVertex3f(x + ancho, 0, z + profundidad)
+    glVertex3f(x + ancho, 0, z - profundidad)
+    glVertex3f(x + ancho, alto, z - profundidad)
+    glVertex3f(x + ancho, alto, z + profundidad)
+    glEnd()
+
+    # Parte trasera
+    glBegin(GL_QUADS)
+    glVertex3f(x - ancho, 0, z - profundidad)
+    glVertex3f(x + ancho, 0, z - profundidad)
+    glVertex3f(x + ancho, alto, z - profundidad)
+    glVertex3f(x - ancho, alto, z - profundidad)
+    glEnd()
+
+colores_libros = [
+    (0.8, 0.0, 0.0),  # Rojo
+    (0.0, 0.8, 0.0),  # Verde
+    (0.0, 0.0, 0.8),  # Azul
+    (0.8, 0.8, 0.0),  # Amarillo
+    (0.8, 0.5, 0.5),  # Rosa
+]
+
+def dibujar_libro(x, y, z, color):
+    glColor3f(*color)  # Color del libro
+    glBegin(GL_QUADS)
+    glVertex3f(x - 0.1, y, z)
+    glVertex3f(x + 0.1, y, z)
+    glVertex3f(x + 0.1, y + 0.3, z)
+    glVertex3f(x - 0.1, y + 0.3, z)
+    glEnd()
+
+posiciones_libros = []
+# Generar posiciones aleatorias solo una vez
+def generar_posiciones_libros(x, y, z):
+    global posiciones_libros
+    posiciones_libros = []  # Limpiar la lista de posiciones
+    offset = 0.26  # Espacio entre libros
+    for i in range(5):  # Supongamos que queremos 5 libros
+        color = random.choice(colores_libros)
+        libro_x = x + random.uniform(-1.25, 1.25)  # Genera una posición aleatoria
+        posiciones_libros.append((libro_x, y + 0.2 + i * offset, z - 0.1, color))
+
+def dibujar_libros_en_estanteria():
+    for libro_x, libro_y, libro_z, color in posiciones_libros:
+        dibujar_libro(libro_x, libro_y, libro_z, color)
+
+def dibujar_silla(x, z):
+    glColor3f(0.4, 0.2, 0.1)
+    
+    # Dibuja el asiento de la silla
+    glBegin(GL_QUADS)
+    glVertex3f(x - 0.3, 1, z - 0.3)  # Asiento
+    glVertex3f(x + 0.3, 1, z - 0.3)
+    glVertex3f(x + 0.3, 1, z + 0.3)
+    glVertex3f(x - 0.3, 1, z + 0.3)
+    glEnd()
+    
+    # Dibuja las patas de la silla
+    glBegin(GL_QUADS)
+    # Parte frontal izquierda
+    glVertex3f(x - 0.3, 0, z - 0.3)
+    glVertex3f(x - 0.2, 0, z - 0.3)
+    glVertex3f(x - 0.2, 1, z - 0.3)
+    glVertex3f(x - 0.3, 1, z - 0.3)
+    
+    # Parte frontal derecha
+    glVertex3f(x + 0.3, 0, z - 0.3)
+    glVertex3f(x + 0.2, 0, z - 0.3)
+    glVertex3f(x + 0.2, 1, z - 0.3)
+    glVertex3f(x + 0.3, 1, z - 0.3)
+
+    # Parte trasera izquierda
+    glVertex3f(x - 0.3, 0, z + 0.3)
+    glVertex3f(x - 0.2, 0, z + 0.3)
+    glVertex3f(x - 0.2, 1, z + 0.3)
+    glVertex3f(x - 0.3, 1, z + 0.3)
+
+    # Parte trasera derecha
+    glVertex3f(x + 0.3, 0, z + 0.3)
+    glVertex3f(x + 0.2, 0, z + 0.3)
+    glVertex3f(x + 0.2, 1, z + 0.3)
+    glVertex3f(x + 0.3, 1, z + 0.3)
+    glEnd()
+
+    # Dibuja el respaldo, orientado hacia la mesa
+    glBegin(GL_QUADS)
+    glColor3f(0.5, 0.3, 0.1)  # Color del respaldo
+    glVertex3f(x - 0.3, 1, z + 0.3)  # Inferior izquierda
+    glVertex3f(x + 0.3, 1, z + 0.3)  # Inferior derecha
+    glVertex3f(x + 0.3, 2, z + 0.3)  # Superior derecha
+    glVertex3f(x - 0.3, 2, z + 0.3)  # Superior izquierda
+    glEnd()
+
+
+def dibujar_sillas():
+    # Posiciones de las sillas alrededor de la mesa
+    posiciones = [
+        (-9, 2.5, 11),  # Izquierda frontal
+        (-9, 2.5, 9),   # Izquierda trasera
+        (-13, 2.5, 11),   # Derecha frontal
+        (-13, 2.5, 9),    # Derecha trasera
+        (-11, 2.5, 13),      # Frente
+        (-11, 2.5, 6)      # Espalda
+    ]
+
+    for (x, y, z) in posiciones:
+        dibujar_silla(x, z)
+
 def mostrar():
+    global posiciones_libros
+    
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
@@ -109,6 +283,88 @@ def mostrar():
     dibujar_cubo_hueco()
     dibujar_mesa()
     dibujar_puerta()
+    dibujar_sillas()
+    # Agregar la estantería de libros
+    glPushMatrix() 
+    glRotatef(90, 0, 1, 0)
+    dibujar_estanteria(-9, 10.80)  # Ubicación de la estantería
+    generar_posiciones_libros(-9, 0, 10.68)
+    dibujar_libros_en_estanteria()
+    glPopMatrix()
+    #------------------------------
+    glPushMatrix() 
+    glRotatef(90, 0, 1, 0)
+    dibujar_estanteria(-9, 6.3)  # Ubicación de la estantería
+    generar_posiciones_libros(-9, 0, 6.18)
+    dibujar_libros_en_estanteria()
+    glPopMatrix()
+    #--------------------------
+    glPushMatrix() 
+    glRotatef(90, 0, 1, 0)
+    dibujar_estanteria(-9, 1.7)  # Ubicación de la estantería
+    generar_posiciones_libros(-9, 0, 1.58)
+    dibujar_libros_en_estanteria()
+    glPopMatrix()
+    #----------------------------
+    glPushMatrix() 
+    glRotatef(90, 0, 1, 0)
+    dibujar_estanteria(-9, -2.8)  # Ubicación de la estantería
+    generar_posiciones_libros(-9, 0, -2.92)
+    dibujar_libros_en_estanteria()
+    glPopMatrix()
+    #----------------------------
+    glPushMatrix() 
+    glRotatef(270, 0, 1, 0)
+    dibujar_estanteria(9, 6.80)  # Ubicación de la estantería
+    generar_posiciones_libros(9, 0, 6.68)
+    dibujar_libros_en_estanteria()
+    glPopMatrix()
+    #----------------------------
+    glPushMatrix() 
+    glRotatef(270, 0, 1, 0)
+    dibujar_estanteria(9, 2.30)  # Ubicación de la estantería
+    generar_posiciones_libros(9, 0, 2.18)
+    dibujar_libros_en_estanteria()
+    glPopMatrix()
+    #----------------------------
+    glPushMatrix() 
+    glRotatef(270, 0, 1, 0)
+    dibujar_estanteria(9, -2.30)  # Ubicación de la estantería
+    generar_posiciones_libros(9, 0, -2.42)
+    dibujar_libros_en_estanteria()
+    glPopMatrix()
+    #--------------------------
+    glPushMatrix() 
+    glRotatef(270, 0, 1, 0)
+    dibujar_estanteria(9, -6.80)  # Ubicación de la estantería
+    generar_posiciones_libros(9, 0, -6.92)
+    dibujar_libros_en_estanteria()
+    glPopMatrix()
+    #-------------------
+    glPushMatrix() 
+    glRotatef(90, 0, 1, 0)
+    dibujar_pared(-10,0,11)
+    glPopMatrix()
+    #---------------------
+    glPushMatrix() 
+    glRotatef(90, 0, 1, 0)
+    dibujar_pared(-10,0,6.45)
+    glPopMatrix()
+    #-------------------
+    glPushMatrix() 
+    glRotatef(90, 0, 1, 0)
+    dibujar_pared(-10,0,1.90)
+    glPopMatrix()
+    #------------------
+    glPushMatrix() 
+    glRotatef(90, 0, 1, 0)
+    dibujar_pared(-10,0,-2.65)
+    glPopMatrix()
+    #---------------------
+    glPushMatrix() 
+    glRotatef(90, 0, 1, 0)
+    dibujar_pared(-10,0,-7.2)
+    glPopMatrix()
     glutSwapBuffers()
 
 def cambiar_tamaño(width, height):
