@@ -143,7 +143,7 @@ def mouse_wheel(button, direction, x, y):
         cam_radius += 1.0  # Alejar
     cam_radius = max(5.0, min(cam_radius, 50.0))  # Limitar el zoom
     glutPostRedisplay()
-
+# Iniciacion del codigo
 def main():
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
