@@ -31,14 +31,30 @@ def draw_walls():
         glutSolidCube(1)
         glPopMatrix()
 
-def draw_floor():
+def draw_floor1(position=(0, 0, 0)):
     glColor3f(0.98, 0.92, 0.84)
+    glPushMatrix()
+    glTranslatef(*position)  # Mover el piso a la posición deseada
     glBegin(GL_QUADS)
-    glVertex3f(-40, 0.0, -7.7)
-    glVertex3f(40, 0.0, -7.7)
-    glVertex3f(40, 0.0, 7.7)
-    glVertex3f(-40, 0.0, 7.7)
+    glVertex3f(-50.1, 0.0, -3.8)
+    glVertex3f(40, 0.0, -3.8)
+    glVertex3f(40, 0.0, 3.8)
+    glVertex3f(-50.1, 0.0, 3.8)
     glEnd()
+    glPopMatrix()
+
+
+def draw_floor2(position=(0, 0, 0)):
+    glColor3f(0.98, 0.92, 0.84)
+    glPushMatrix()
+    glTranslatef(*position)  # Mover el piso a la posición deseada
+    glBegin(GL_QUADS)
+    glVertex3f(-40, 0.0, -3.8)
+    glVertex3f(40, 0.0, -3.8)
+    glVertex3f(40, 0.0, 3.8)
+    glVertex3f(-40, 0.0, 3.8)
+    glEnd()
+    glPopMatrix()
 
 def draw_Soporte_horizontal(length, axis='x'):
     glColor3f(0.0, 0.0, 0.0)  # Color del soporte
@@ -78,7 +94,8 @@ def draw_scene():
     glRotatef(camera_angle_x, 1.0, 0.0, 0.0)
     glRotatef(camera_angle_y, 0.0, 1.0, 0.0)
 
-    draw_floor()
+    draw_floor1(position=(0, 0, -3.8))
+    draw_floor2(position=(0, 0, 3.8))
     draw_walls()
     draw_stairs(position=(-47.5, -5.1, 1), steps=10)  # Escaleras a la izquierda
     draw_stairs(position=(47.5, -5.1, 1), steps=10)   # Escaleras a la derecha
@@ -136,7 +153,7 @@ def main():
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
     glutInitWindowSize(1200, 600)
-    glutCreateWindow("Paredes y Piso")
+    glutCreateWindow("Pasadizo y escalera")
     init()
     glutDisplayFunc(draw_scene)
     glutReshapeFunc(reshape)
