@@ -14,41 +14,6 @@ def init():
     glEnable(GL_BLEND)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)  
 
-def draw_table():
-    glColor3f(0.6, 0.3, 0.1)  # Color de la mesa marrón
-    glPushMatrix()
-    glScalef(2.0, 0.1, 1.0)  
-    glutSolidCube(1)
-    glPopMatrix()
-
-    # Pies de la mesa
-    for x, z in [(-0.9, 0.4), (0.9, 0.4), (-0.9, -0.4), (0.9, -0.4)]:
-        glPushMatrix()
-        glTranslatef(x, -0.5, z)
-        glScalef(0.1, 1.0, 0.1)
-        glutSolidCube(1)
-        glPopMatrix()
-
-def draw_chair():
-    glColor3f(0.5, 0.2, 0.1)  # Color de la silla
-    glPushMatrix()
-    glScalef(0.5, 0.05, 0.5)  
-    glutSolidCube(1)
-    glPopMatrix()
-
-    glPushMatrix()
-    glTranslatef(0.0, 0.25, -0.2)
-    glScalef(0.5, 0.5, 0.05)
-    glutSolidCube(1)
-    glPopMatrix()
-
-    for x, z in [(-0.2, -0.2), (0.2, -0.2), (-0.2, 0.2), (0.2, 0.2)]:
-        glPushMatrix()
-        glTranslatef(x, -0.3, z)
-        glScalef(0.05, 0.5, 0.05)
-        glutSolidCube(1)
-        glPopMatrix()
-
 def draw_border_patio():
     # Paredes del comedor con ventanas
     glColor4f(0.8, 0.8, 0.8, 0.5)   
