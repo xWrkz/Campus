@@ -192,7 +192,6 @@ def draw_scene():
     glLoadIdentity()
 
     # Rota toda la escena para que la fachada mire hacia la cámara inicial
-    glRotatef(180, 0, 1, 0)  # Rotación de 180 grados en el eje Y
 
     glTranslatef(0.0, 0.0, -camera_distance)
     glRotatef(camera_angle_x, 1.0, 0.0, 0.0)
