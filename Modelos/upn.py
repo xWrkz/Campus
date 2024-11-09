@@ -51,8 +51,6 @@ def draw_terreno_edificios():
     glVertex3f(-20.0, 2.5, -6.5) #no
     glEnd()
 
-
-
 def draw_terreno_patio():
 # Dibujar suelo inferior(el terreno del patio)
     glColor3f(0.0, 0.0, 0.0)  # Color gris oscuro para el terreno
@@ -134,8 +132,6 @@ def draw_border_patio():
 
     glPopMatrix()
 
-
-
 def draw_central_patio():
     # Dibujar un área de patio central al lado del comedor
     glColor3f(0.5, 0.7, 0.5)  # Color verde para el césped
@@ -160,7 +156,6 @@ def draw_central_patio():
     glEnd()
     
     glPopMatrix()
-
 
 def draw_building():
     # Color de la pared del edificio (gris claro)
@@ -229,7 +224,7 @@ def draw_block():
     
     glPopMatrix()
 
-# Comienzo de la creacion de la losa deportiva
+# COMIENZO LOSA DEPORTIVA
 def draw_half_circle(radius, segments):
     glLineWidth(2.0)
     glColor3f(1.0, 1.0, 1.0)
@@ -437,85 +432,347 @@ def draw_stairs():
         glutSolidCube(1) 
         glPopMatrix()
 
+# COMIENZO DE FACHADA UPN
+def draw_paredes_fachada():
+    glColor3f(0.0, 0.0, 0.0)  # Color de las paredes
+    wall_positions = [
+        (0.0, 1.0, -75.0),  # Pared frontal
+        (20.0, 1.0, 40.0),  # Pared trasera
+        (-70.0, 3.6, 40.0),  # Pared inclinada hacia arriba
+        (-90.0, 3.5, -17.5), # Pared izquierda
+        (90.0, 1.0, -17.5)   # Pared derecha
+    ]
+    wall_scales = [
+        (180.0, 1.0, 1.0),   # Pared frontal
+        (140.0, 1.0, 1.0),   # Pared trasera
+        (40.0, 1.0, 1.0),    # Pared inclinada
+        (1.0, 6.0, 116.0),   # Pared izquierda
+        (1.0, 1.0, 116.0)    # Pared derecha
+    ]
+    for i, (position, scale) in enumerate(zip(wall_positions, wall_scales)):
+        glPushMatrix()
+        glTranslatef(*position)  # Posicionar la pared
+        # Inclinación hacia arriba en el eje X solo para la pared en (-60.0, 1.0, 40.0)
+        if position == (-70.0, 3.6, 40.0):
+            glRotatef(-7.5, 0, 0, 1)  # Inclina 20 grados hacia arriba en el eje X 
+        glScalef(*scale)         # Escalar la pared
+        glutSolidCube(1)         # Dibujar el cubo que representa la pared
+        glPopMatrix()
+
+def draw_contorno_structure():
+    glColor3f(0.0, 0.0, 0.0)  # Color del contorno negro
+    contorno_positions = [
+        (0.0, 0.1, -4.0),   # Segmento inferior
+        (0.0, 0.1, 4.0),    # Segmento superior
+        (-15.0, 0.1, 0.0),  # Segmento izquierdo
+        (15.0, 0.1, 0.0)    # Segmento derecho
+    ]
+    contorno_scales = [
+        (30.0, 0.7, 0.5),   # Escala del segmento inferior
+        (30.0, 0.7, 0.5),   # Escala del segmento superior
+        (0.5, 0.7, 8.5),    # Escala del segmento izquierdo
+        (0.5, 0.7, 8.5)     # Escala del segmento derecho
+    ]
+    for position, scale in zip(contorno_positions, contorno_scales):
+        glPushMatrix()
+        glTranslatef(*position)
+        glScalef(*scale)
+        glutSolidCube(1)  # Dibuja el cubo como segmento del contorno
+        glPopMatrix()
+
+def draw_centro_structure():
+    glColor3f(0.0, 0.0, 0.0)  # Color negro
+    centro_positions = [
+        (0.0, 0.1, -4.0),   # Segmento inferior
+        (0.0, 0.1, 4.0),    # Segmento superior
+        (-1.5, 0.1, 0.0),   # Segmento izquierdo
+        (1.5, 0.1, 0.0)     # Segmento derecho
+    ]
+    centro_scales = [
+        (3.0, 0.7, 0.5),    # Escala del segmento inferior
+        (3.0, 0.7, 0.5),    # Escala del segmento superior
+        (0.5, 0.7, 8.0),    # Escala del segmento izquierdo
+        (0.5, 0.7, 8.0)     # Escala del segmento derecho
+    ]
+    for position, scale in zip(centro_positions, centro_scales):
+        glPushMatrix()
+        glTranslatef(*position)
+        glScalef(*scale)
+        glutSolidCube(1)  # Dibuja un cubo como segmento del rectángulo central
+        glPopMatrix()
+
+def draw_soporte_fachada(height):
+    glColor3f(0.0, 0.0, 0.0)  # Color del soporte
+    glPushMatrix()
+    glTranslatef(0.0, height / 1.5, 0.0)  # Posicionar el soporte
+    glScalef(0.1, height, 0.1)  # Escalar el soporte en base a la altura
+    glutSolidCube(1)  # Dibuja un cubo sólido como soporte
+    glPopMatrix()
+
+def draw_multiple_soportes(count, separation, height):
+    for i in range(count):
+        glPushMatrix()  # Guardar la matriz de transformación actual
+        glTranslatef(i * separation, 0.0, 0.0)  # Separar cada soporte en el eje X
+        draw_soporte_fachada(height)  # Llamar a la función que dibuja un solo soporte con altura personalizada
+        glPopMatrix()  # Restaurar la matriz de transformación
+
+def draw_block_fachada(position, scale, color=(1.0, 1.0, 1.0)):  # Color blanco por defecto
+    glColor3f(*color)  # Aplicar el color del bloque
+    glPushMatrix()
+    glTranslatef(*position)  # Posicionar el bloque
+    glScalef(*scale)         # Escalar el bloque
+    glutSolidCube(1)         # Dibuja un cubo sólido
+    glPopMatrix()
+
+def draw_piso_entrada(position, scale):
+    glColor3f(0.75, 0.75, 0.75)  # Color gris
+    glPushMatrix()
+    glTranslatef(*position)    # Posicionar el plano
+    glScalef(*scale)           # Escalar el plano en X y Z
+    glBegin(GL_QUADS)
+    glVertex3f(-1.0, 0.0, -1.0)  # Esquina inferior izquierda
+    glVertex3f(1.0, 0.0, -1.0)   # Esquina inferior derecha
+    glVertex3f(1.0, 0.0, 1.0)    # Esquina superior derecha
+    glVertex3f(-1.0, 0.0, 1.0)   # Esquina superior izquierda
+    glEnd()
+    glPopMatrix()
+
+def draw_piso_general(position, scale):
+    glColor3f(0.75, 0.75, 0.75)  # Color gris
+    glPushMatrix()
+    glTranslatef(*position)    # Posicionar el plano
+    glScalef(*scale)           # Escalar el plano en X y Z
+    glBegin(GL_QUADS)
+    glVertex3f(-1.0, 0.0, -1.0)  # Esquina inferior izquierda
+    glVertex3f(1.0, 0.0, -1.0)   # Esquina inferior derecha
+    glVertex3f(1.0, 0.0, 1.0)    # Esquina superior derecha
+    glVertex3f(-1.0, 0.0, 1.0)   # Esquina superior izquierda
+    glEnd()
+    glPopMatrix()
+
+def draw_postes_fachada():
+    glColor3f(0.0, 0.0, 0.0)  # Color de los postes
+    # Listas de posiciones y escalas para los postes
+    positions = [
+        (-85.0, 11.5, -7.0),
+        (-84.0, 11.5, -17.0),  # Cambiado para posicionar un poco a la derecha
+        (-84.5, 11.5, -12.0),  # Cambiado para posicionar un poco más a la derecha
+        (-84.5, 13, -13.0),
+        (-90.0, 13.5, 10.0),
+        (-90.0, 13.5, 20.0),   # Cambiado para posicionar un poco a la derecha
+        (-90.0, 13.5, 30.0),   # Cambiado para posicionar un poco más a la derecha
+        (-90.0, 13.5, 39.5),
+        (-90.0, 13.5, -50.0),   # Cambiado para posicionar un poco a la izquierda
+        (-90.0, 13.5, -45.0),  # Cambiado para posicionar un poco más a la izquierda
+        (-90.0, 13.5, -40.0),
+        (-90.0, 13.5, -35.0),   # Cambiado para posicionar un poco a la izquierda
+        (-90.0, 13.5, -30.0)   # Cambiado para posicionar un poco más a la izquierda
+    ]
+    scales = [
+        (0.5, 10.0, 1.0),
+        (0.5, 10.0, 1.0),
+        (0.5, 10.0, 1.0),
+        (0.5, 1.0, 24.5),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0),
+        (0.2, 2.0, 1.0)
+    ]
+    # Dibujar cada poste
+    for pos, scale in zip(positions, scales):
+        glPushMatrix()
+        glTranslatef(*pos)  # Posicionar el poste
+        glScalef(*scale)    # Escalar el poste
+        glutSolidCube(1)     # Dibujar el cubo que representa el poste
+        glPopMatrix()
+
+def draw_escaleras_fachada():
+    stair_width = 25
+    stair_depth = 1
+    stair_height = 0.6  # Escalones más altos
+    num_steps = 10   # Menos escalones necesarios
+    glColor3f(0.85, 0.85, 0.85) 
+
+    for i in range(num_steps):
+        glPushMatrix()
+        glRotatef(90,0,1,0)
+        glTranslatef(12.5, 1 + (i * stair_height), -72.7 - (i * stair_depth))
+        glScalef(stair_width, stair_height, stair_depth)
+        glutSolidCube(1) 
+        glPopMatrix()
+
+# ------------------------------------------------------DIBUJADO DE ESCENA-------------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------------------------------
 def draw_scene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
-    # Movimiento de cámara
+    # Movimiento de camara
     glTranslatef(0.0, 0.0, -camera_distance)
     glRotatef(camera_angle_x, 1.0, 0.0, 0.0)
     glRotatef(camera_angle_y, 0.0, 1.0, 0.0)
 
-    # Terreno de edificios
+# COMIENZO DE FACHADA------------------------------------------------------------------------------------
+    draw_paredes_fachada()  # Dibuja las paredes
+    draw_postes_fachada()
+    draw_escaleras_fachada()
+
+    draw_block_fachada((-90, 9.5, -40.0), (0.5, 6.0, 30.0))
+    draw_block_fachada((-90.0, 9.5, 20.0), (0.5, 6.0, 40.0))
+    draw_block_fachada((-86.2, 8.5, -25.0), (8, 16, 0.5))
+    draw_block_fachada((-86.2, 8.5, 0.0), (8, 16, 0.5))
+    draw_block_fachada((-90, 15.5, -40.0), (0.5, 2, 30.0))
+    draw_block_fachada((-90.0, 15.5, 20.0), (0.5, 2, 40.0))
+    draw_block_fachada((-90, 11.5, -65.0), (0.5, 10, 20.0))
+    draw_block_fachada((90.0, 7, -17.0), (0.5, 13, 116.0))
+    draw_block_fachada((0.0, 9, -75.0), (180, 15, 0.5))
+    draw_block_fachada((-90.0, 17.5, -12.5), (0.5,6.0, 25.5), (1.0, 1.0, 0.0))  # Color amarillo
+    draw_block_fachada((-86.2, 16.5, -12.5), (7, 0.5, 25)) #techo de puerta principal
+
+    draw_piso_entrada((-86.2, 6.5, -12.5), (4, 1.0, 13))
+
     glPushMatrix()
+    glTranslatef(0, 5, 39.5) 
+    glRotatef(90,1,0,0)
+    draw_contorno_structure()
+    glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(0, 5, 39.5) 
+    glRotatef(90,1,0,0)
+    draw_centro_structure()
+    glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(10, 0.0, 40) 
+    draw_multiple_soportes(160, 0.5, 6.0)  # Dibuja 5 soportes con separación de 1.5 unidades
+    glPopMatrix()
+    
+    glPushMatrix()
+    glTranslatef(-50, 0.0, 40) 
+    draw_multiple_soportes(80, 0.5, 6.0)  # Dibuja 5 soportes con separación de 1.5 unidades
+    glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(-90, 5.5, 40)
+    glRotatef(-7.5,0,0,1)
+    draw_multiple_soportes(80, 0.5, 6.0)  # Dibuja 5 soportes con separación de 1.5 unidades
+    glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(-1, 0, 40)
+    draw_multiple_soportes(5, 0.5, 7.5)  # Dibuja 5 soportes con separación de 0.5 y altura de 6.0
+    glPopMatrix()
+# FIN DE FACHADA--------------------------------------------------------------------------------------
+
+# TERRENO UNIVERSIDAD---------------------------------------------------------------------------------
+    # Terreno de pabellones
+    glPushMatrix()
+    glTranslatef(-12.0, 0.0, -47.0)
     draw_terreno_edificios()
     glPopMatrix()
 
-    # Terreno del patio
+    # Terreno del areaverde
     glPushMatrix()
+    glTranslatef(-12.0, 0.0, -47.0)
     draw_terreno_patio()
     glPopMatrix()
 
-    glPushMatrix
+    #--------------------------------CAMINOS------------------------------
+    # Dibujado en terreno
+    glPushMatrix()
+    glTranslatef(0.0, 0.0, 0.0)
+    glRotatef(90, 0.0, 1.0, 0.0)
+    draw_vertical_path(65)
     draw_vertical_path(-10)
     draw_vertical_path(30)
-    glPopMatrix 
-
-    glPushMatrix
-    draw_horizontal_path(-9.0)  # Camino horizontal cerca de la parte trasera
-    draw_horizontal_path(9.0)
-    glPopMatrix
+    glPopMatrix()
     
+    # Separador de aparcamientos
+    glPushMatrix()
+    glTranslatef(0.0, 0.0, 0.0)
+    glRotatef(90, 0.0, 1.0, 0.0)
     draw_block()
-
-    # Dibujar paredes del comedor con ventanas
-    glPushMatrix()
-    glTranslatef(10.0, 0.0, 10.0)
-    draw_border_patio()
     glPopMatrix()
-    # Dibujar el patio central al lado del comedor
+
+    # Caminos delgados
+    glPushMatrix()
+    glTranslatef(0.0, 0.0, -30.0)
+    glRotatef(90, 0.0, 1.0, 0.0)
+    draw_horizontal_path(-13.0)  
+    draw_horizontal_path(19.0)
+    glPopMatrix()
+    #--------------------------------CAMINOS------------------------------
+
+    #--------------------------PATIO AREA VERDE------------------------------
+    # Dibuja paredes del comedor con ventanas
+    glPushMatrix()
+    glTranslatef(13.0, 0.0, -43.0)
+    glRotatef(90, 0.0, 1.0, 0.0)
+    draw_border_patio()  
+    glPopMatrix()
+
+    # Dibuja el patio central al lado del comedor
+    glPushMatrix()
+    glTranslatef(3.0, 0.0, -33.0)
+    glRotatef(90, 0.0, 1.0, 0.0)
     draw_central_patio()
+    glPopMatrix()
+    #--------------------------PATIO AREA VERDE------------------------------
 
-    # Dibujar el edificio cercano al comedor
+    # ------------------------ PABELLONES ------------------------
     glPushMatrix()
-    glTranslatef(17.50, 7.5, -20.0)  # Ubicar el edificio en la escena
+    glTranslatef(-30.0, 7.5, -45.0)  # Ubica pabellon A en la escena
+    glRotatef(90, 0.0, 1.0, 0.0) # La hace girar sobre su mismo eje
     draw_building()
     glPopMatrix()
+
     glPushMatrix()
-    glTranslatef(17.50, 7.5, 20.0)  # Ubicar el edificio en la escena
+    glTranslatef(35.50, 7.5, -45.0)  # Ubica pabellon B en la escena
+    glRotatef( 270, 0.0, 1.0, 0.0) # La hace girar sobre su mismo eje
     draw_building()
     glPopMatrix()
+    # ------------------------ PABELLONES------------------------
 
     draw_Upn((-5,3,10),(2,2,3),(0,0,0,0))
     draw_Upn((-5.5,5,9),(1,5,0.5),(0,0,0,0),(1,1,0))
     draw_Upn((-5.5,5,9.8),(1,5,0.5),(0,0,0,0),(1,1,0))
     draw_Upn((-5.5,9.1,6),(1,1.8,0.5),(18,1,0,0),(1,1,0))
     draw_Upn((-5.5,3.2,11.9),(1,1.8,0.5),(-18,1,0,0),(1,1,0))
+# FIN DE TERRENO UNIVERDSIDAD ------------------------------------------------------------------------
 
-# Comienzo de ubicacion de la Losa deportiva
-
+# COMIENZO DE LOSA DEPORTIVA
     # Dibujado el terreno
     glPushMatrix()
-    glTranslatef(20.0, 2.6, 50.0)
+    glTranslatef(65.50, 2.6, -53.0)
+    glRotatef(270, 0.0, 1.0, 0.0) # La hace girar sobre su mismo eje
     draw_floor()
     draw_walls()
     glPopMatrix()
     
     # Dibujado de base de las escaleras
     glPushMatrix()
-    glTranslatef(27.0, 2.6, 53.0)   
+    glTranslatef(75.50, 2.6, -50.0)
+    glRotatef(270, 0.0, 1.0, 0.0) # La hace girar sobre su mismo eje
     draw_rectangle()
     glPopMatrix()
 
     # Dibujado de area verde en la losa
     glPushMatrix()
-    glTranslatef(30.5, 2.6, 55.0)
+    glTranslatef(75.50, 2.6, -42.5)
+    glRotatef(270, 0.0, 1.0, 0.0) # La hace girar sobre su mismo eje
     draw_rectangle_green()
     glPopMatrix()
 
     # Dibujados sobre el terreno
     glPushMatrix()
-    glTranslatef(20.0, 2.7, 42.5)
+    glTranslatef(65.50, 2.6, -53.5)
+    glRotatef(270, 0.0, 1.0, 0.0) # La hace girar sobre su mismo eje
     draw_rectangle_outline()
     draw_rectangle_outline2()
     draw_lines()
@@ -524,75 +781,80 @@ def draw_scene():
 
     # Dibujados de basquet
     glPushMatrix()
-    glTranslatef( 3.5 , 2.7, 42.0)  # Canasta izquierda
+    glTranslatef(65.50, 2.6, -69.5)  # Canasta izquierda
+    glRotatef(90, 0.0, 1.0, 0.0)
     draw_Soporte()
     draw_aro()
     draw_backboard(-1)
     glPopMatrix()
 
     glPushMatrix()
-    glTranslatef(36.5 , 2.7, 42.0)  # Canasta derecha
+    glTranslatef(65.50, 2.6, -37.5)  # Canasta derecha
+    glRotatef(90, 0.0, 1.0, 0.0)
     draw_Soporte()
     draw_aro()
     draw_backboard(1)
     glPopMatrix()
 
     glPushMatrix()
-    glTranslatef(20.0, 2.6, 42.0)   
-    glRotatef(180, 0.0, 1.0, 0.0) # La hace girar sobre su mismo eje
+    glTranslatef(65.50, 2.6, -51.0)   
+    glRotatef(270, 0.0, 1.0, 0.0) # La hace girar sobre su mismo eje
     draw_stairs()
     glPopMatrix()
     
+    # Lado IZQ
     # Circulo pequenio para el campo situado en el palo de baloncesto izq
     glPushMatrix()
-    glTranslatef(30.6, 2.8, 42.5) 
+    glTranslatef(65.50, 2.7, -67.5) 
     glRotatef(90, 1.0, 0.0, 0.0)  
-    glRotatef(180, 0.0, 0.0, 1.0)
-    draw_half_circle(1.5, 100)  
+    glRotatef(90, 0.0, 0.0, 1.0)
+    draw_half_circle(0.7, 100) 
     glPopMatrix()
 
     # Circulo mediano para el campo situado en el palo de baloncesto izq
     glPushMatrix()
-    glTranslatef(34.5, 2.8, 42.5) 
+    glTranslatef(65.50, 2.7, -64.0)
     glRotatef(90, 1.0, 0.0, 0.0)  
-    glRotatef(180, 0.0, 0.0, 1.0)
-    draw_half_circle(0.7, 100) 
+    glRotatef(90, 0.0, 0.0, 1.0)
+    draw_half_circle(1.5, 100)  
     glPopMatrix()
 
     # Circulo grande para el campo situado en el palo de baloncesto izq
     glPushMatrix()
-    glTranslatef(34.5, 2.8, 42.5) 
+    glTranslatef(65.50, 2.7, -68.0)
     glRotatef(90, 1.0, 0.0, 0.0)  
-    glRotatef(180, 0.0, 0.0, 1.0)
+    glRotatef(90, 0.0, 0.0, 1.0)
     draw_half_circle(6, 100) 
     glPopMatrix()
 
+    # Lado DER   
     # Circulo pequenio para el campo situado en el palo de baloncesto derecho
     glPushMatrix()
-    glTranslatef( 9.5 , 2.8, 42.5) 
+    glTranslatef(65.50, 2.7, -39.0)
     glRotatef(90, 1.0, 0.0, 0.0)  
-    glRotatef(0, 0.0, 0.0, 1.0)
-    draw_half_circle(1.5, 100)  
+    glRotatef(270, 0.0, 0.0, 1.0)
+    draw_half_circle(0.7, 100)  
     glPopMatrix()
-    
+
     # Circulo mediano para el campo situado en el palo de baloncesto derecho
     glPushMatrix()
-    glTranslatef( 5.5 , 2.8, 42.5)
+    glTranslatef(65.50, 2.7, -43.0) 
     glRotatef(90, 1.0, 0.0, 0.0)  
-    glRotatef(0, 0.0, 0.0, 1.0)
-    draw_half_circle(0.7, 100)  
+    glRotatef(270, 0.0, 0.0, 1.0)
+    draw_half_circle(1.5, 100)  
     glPopMatrix()
 
     # Circulo grande para el campo situado en el palo de baloncesto derecho
     glPushMatrix()
-    glTranslatef( 5.5 , 2.8, 42.5)
+    glTranslatef(65.50, 2.7, -39.0)
     glRotatef(90, 1.0, 0.0, 0.0)  
-    glRotatef(0, 0.0, 0.0, 1.0)
+    glRotatef(270, 0.0, 0.0, 1.0)
     draw_half_circle(6, 100)  
     glPopMatrix()
 
+    # CIRCULO MEDIO
     glPushMatrix()
-    glTranslatef( 20.0 , 2.8, 42.5) 
+    glTranslatef(65.50, 2.7, -53.5)
     glRotatef(90, 1.0, 0.0, 0.0)
     glColor3f(1.0, 1.0, 1.0)  
     draw_circle(2.0, 100)  
@@ -621,7 +883,7 @@ def reshape(width, height):
     glViewport(0, 0, width, height)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
-    gluPerspective(45, width / height, 1, 200)
+    gluPerspective(45, width / height, 1, 500)
     glMatrixMode(GL_MODELVIEW)
 
 def keyboard(key, x, y):
