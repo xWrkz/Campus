@@ -14,6 +14,41 @@ def init():
     glEnable(GL_BLEND)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)  
 
+def draw_table():
+    glColor3f(0.6, 0.3, 0.1)  # Color de la mesa marrón
+    glPushMatrix()
+    glScalef(2.0, 0.1, 1.0)  
+    glutSolidCube(1)
+    glPopMatrix()
+
+    # Pies de la mesa
+    for x, z in [(-0.9, 0.4), (0.9, 0.4), (-0.9, -0.4), (0.9, -0.4)]:
+        glPushMatrix()
+        glTranslatef(x, -0.5, z)
+        glScalef(0.1, 1.0, 0.1)
+        glutSolidCube(1)
+        glPopMatrix()
+
+def draw_chair():
+    glColor3f(0.5, 0.2, 0.1)  # Color de la silla
+    glPushMatrix()
+    glScalef(0.5, 0.05, 0.5)  
+    glutSolidCube(1)
+    glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(0.0, 0.25, -0.2)
+    glScalef(0.5, 0.5, 0.05)
+    glutSolidCube(1)
+    glPopMatrix()
+
+    for x, z in [(-0.2, -0.2), (0.2, -0.2), (-0.2, 0.2), (0.2, 0.2)]:
+        glPushMatrix()
+        glTranslatef(x, -0.3, z)
+        glScalef(0.05, 0.5, 0.05)
+        glutSolidCube(1)
+        glPopMatrix()
+
 def draw_border_patio():
     # Paredes del comedor con ventanas
     glColor4f(0.8, 0.8, 0.8, 0.5)   
@@ -130,17 +165,62 @@ def draw_Upn(position, scale, rotate, color=(1.0, 1.0, 1.0)):  # Color blanco po
     glutSolidCube(1)         # Dibuja un cubo sólido
     glPopMatrix()
     
+def draw_square():
+    glColor3f(0.6, 0.4, 0.2)  # Color marrón para el cuadrado
+    glBegin(GL_QUADS)
+    
+    # Cuadrado: Cara en el plano XY
+    glVertex3f(-0.5, -0.5, 0.0)
+    glVertex3f(0.5, -0.5, 0.0)
+    glVertex3f(0.5, 0.5, 0.0)
+    glVertex3f(-0.5, 0.5, 0.0)
+
+    glEnd()
+
 def draw_block():
-    # Dibuja un bloque largo y alto encima del camino
-    glColor3f(0.6, 0.4, 0.2)  # Color marrón para el bloque
-    glPushMatrix()
-    
-    # Posicionar el bloque para que esté alineado con el camino vertical
-    glTranslatef(-7.0, 3.5, 0.0)  # Moverse al lado del camino vertical
-    glScalef(1, 0.5, 50.0)  # Tamaño del bloque (alto y largo)
-    glutSolidCube(1)
-    
-    glPopMatrix()
+    num_sections = 13  # Número de bloques en zigzag
+    section_length = 6.0  # Longitud de cada bloque
+    section_width = 3.0   # Ancho de cada bloque
+    section_height = 1.5  # Altura de cada bloque
+    edge_offset_x = -13.0  
+    for i in range(num_sections):
+        glPushMatrix()
+        # Alternar la rotación para el zigzag
+        angle = 45 if i % 2 == 0 else -45  
+        offset_z = i * (section_length * 0.7) - 10  # Factor ajustado para unir bloques
+        offset_y = 3.0 
+        # Aplicar traslación y rotación
+        glTranslatef(edge_offset_x, offset_y, offset_z)
+        glRotatef(angle, 0, 1, 0)
+        # Dibujar la base del bloque en gris
+        glColor3f(0.5, 0.5, 0.5)  # Color gris para la base del bloque
+        glPushMatrix()
+        glScalef(section_width, section_height, section_length)
+        glutSolidCube(1)  # Bloque principal en gris
+        glPopMatrix()
+        
+        # Dibujar la parte superior dividida en dos mitades
+        glPushMatrix()
+        glTranslatef(0, section_height / 2, 0)  
+        glColor3f(0.0, 0.8, 0.0)  # Color verde
+        glPushMatrix()
+        glTranslatef(-section_width / 4, 0, 0)  
+        glScalef(section_width / 2, 0.1, section_length)  # Capa delgada en la mitad izquierda
+        glutSolidCube(1)
+        glPopMatrix()
+        
+        # Mitad derecha en gris
+        glColor3f(0.5, 0.5, 0.5)  # Color gris
+        glPushMatrix()
+        glTranslatef(section_width / 4, 0, 0)  # Mover a la derecha
+        glScalef(section_width / 2, 0.1, section_length)  # Capa delgada en la mitad derecha
+        glutSolidCube(1)
+        glPopMatrix()
+        
+        glPopMatrix()
+        
+        glPopMatrix()
+
 
 
 def draw_scene():
