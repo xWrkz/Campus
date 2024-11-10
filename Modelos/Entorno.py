@@ -177,50 +177,106 @@ def draw_square():
 
     glEnd()
 
-def draw_block():
-    num_sections = 13  # Número de bloques en zigzag
-    section_length = 6.0  # Longitud de cada bloque
-    section_width = 3.0   # Ancho de cada bloque
-    section_height = 1.5  # Altura de cada bloque
-    edge_offset_x = -13.0  
-    for i in range(num_sections):
-        glPushMatrix()
-        # Alternar la rotación para el zigzag
-        angle = 45 if i % 2 == 0 else -45  
-        offset_z = i * (section_length * 0.7) - 10  # Factor ajustado para unir bloques
-        offset_y = 3.0 
-        # Aplicar traslación y rotación
-        glTranslatef(edge_offset_x, offset_y, offset_z)
-        glRotatef(angle, 0, 1, 0)
-        # Dibujar la base del bloque en gris
-        glColor3f(0.5, 0.5, 0.5)  # Color gris para la base del bloque
-        glPushMatrix()
-        glScalef(section_width, section_height, section_length)
-        glutSolidCube(1)  # Bloque principal en gris
-        glPopMatrix()
-        
-        # Dibujar la parte superior dividida en dos mitades
-        glPushMatrix()
-        glTranslatef(0, section_height / 2, 0)  
-        glColor3f(0.0, 0.8, 0.0)  # Color verde
-        glPushMatrix()
-        glTranslatef(-section_width / 4, 0, 0)  
-        glScalef(section_width / 2, 0.1, section_length)  # Capa delgada en la mitad izquierda
-        glutSolidCube(1)
-        glPopMatrix()
-        
-        # Mitad derecha en gris
-        glColor3f(0.5, 0.5, 0.5)  # Color gris
-        glPushMatrix()
-        glTranslatef(section_width / 4, 0, 0)  # Mover a la derecha
-        glScalef(section_width / 2, 0.1, section_length)  # Capa delgada en la mitad derecha
-        glutSolidCube(1)
-        glPopMatrix()
-        
-        glPopMatrix()
-        
-        glPopMatrix()
+def draw_zigzag_path():
+    glPushMatrix()
+    glTranslatef(-13.7, 3.0, -24)  # Eleva el bloque más alto sobre el suelo
+    glLineWidth(24.0)  # Aumenta el grosor de las líneas
 
+    # Dimensiones del bloque y los triángulos
+    block_length = 60.0    # Largo del bloque
+    block_width = 1.4      # Ancho del bloque
+    block_height = 2.0     # Altura del bloque
+    triangle_width = 5.0   # Ancho de los triángulos laterales
+    triangle_height = 10.0  # Altura de los triángulos laterales
+
+    # Cuerpo principal del bloque rectangular (cara superior sin borde)
+    glColor3f(0.0, 1.0, 0.0)  # Verde para la cara superior
+    glBegin(GL_QUADS)
+    glVertex3f(-block_width, block_height, 0)
+    glVertex3f(block_width, block_height, 0)
+    glVertex3f(block_width, block_height, block_length)
+    glVertex3f(-block_width, block_height, block_length)
+    glEnd()
+
+    # Colorear los lados y la cara inferior en gris
+    glColor3f(0.5, 0.5, 0.5)  # Gris
+    glBegin(GL_QUADS)
+    # Cara inferior
+    glVertex3f(-block_width, 0, 0)
+    glVertex3f(block_width, 0, 0)
+    glVertex3f(block_width, 0, block_length)
+    glVertex3f(-block_width, 0, block_length)
+
+    # Caras laterales del bloque
+    glVertex3f(-block_width, 0, 0)
+    glVertex3f(-block_width, block_height, 0)
+    glVertex3f(-block_width, block_height, block_length)
+    glVertex3f(-block_width, 0, block_length)
+
+    glVertex3f(block_width, 0, 0)
+    glVertex3f(block_width, block_height, 0)
+    glVertex3f(block_width, block_height, block_length)
+    glVertex3f(block_width, 0, block_length)
+    glEnd()
+
+    # Triángulos en zigzag en el borde derecho (sin borde superior)
+    num_zigzags = 3
+    for i in range(num_zigzags):
+        z_position = i * (block_length / num_zigzags)
+
+        # Cara superior del triángulo en verde
+        glColor3f(0.0, 1.0, 0.0)  # Verde para la cara superior
+        glBegin(GL_TRIANGLES)
+        glVertex3f(block_width, block_height, z_position)
+        glVertex3f(block_width + triangle_width, block_height, z_position + triangle_height)
+        glVertex3f(block_width, block_height, z_position + triangle_height * 2)
+        glEnd()
+
+        # Pintar los lados y la base del triángulo en gris
+        glColor3f(0.5, 0.5, 0.5)  # Gris para los lados y la base
+        glBegin(GL_QUADS)
+        # Cara lateral derecha hacia el suelo
+        glVertex3f(block_width + triangle_width, block_height, z_position + triangle_height)
+        glVertex3f(block_width + triangle_width, 0, z_position + triangle_height)
+        glVertex3f(block_width, 0, z_position + triangle_height * 2)
+        glVertex3f(block_width, block_height, z_position + triangle_height * 2)
+
+        # Cara lateral izquierda hacia el suelo
+        glVertex3f(block_width, block_height, z_position)
+        glVertex3f(block_width, 0, z_position)
+        glVertex3f(block_width, 0, z_position + triangle_height * 2)
+        glVertex3f(block_width, block_height, z_position + triangle_height * 2)
+
+        # Base del triángulo en el suelo
+        glVertex3f(block_width, 0, z_position)
+        glVertex3f(block_width + triangle_width, 0, z_position + triangle_height)
+        glVertex3f(block_width, 0, z_position + triangle_height * 2)
+        glEnd()
+
+        # Cara trasera del triángulo (cierra el triángulo en la parte trasera)
+        glBegin(GL_QUADS)
+        glVertex3f(block_width, block_height, z_position)
+        glVertex3f(block_width + triangle_width, block_height, z_position + triangle_height)
+        glVertex3f(block_width + triangle_width, 0, z_position + triangle_height)
+        glVertex3f(block_width, 0, z_position)
+        glEnd()
+
+        # Bordes horizontales en la parte superior del triángulo
+        glColor3f(0.5, 0.5, 0.5)  # Gris para los bordes horizontales
+        # Borde superior en el lado derecho del triángulo
+        glBegin(GL_LINES)
+        glVertex3f(block_width + triangle_width, block_height, z_position + triangle_height)
+        glVertex3f(block_width, block_height, z_position + triangle_height * 2)
+        glEnd()
+
+        # Borde superior en el lado izquierdo del triángulo
+        glBegin(GL_LINES)
+        glVertex3f(block_width, block_height, z_position)
+        glVertex3f(block_width + triangle_width, block_height, z_position + triangle_height)
+        glEnd()
+
+    glPopMatrix()
+    glLineWidth(1.0)  # Restablece el grosor de las líneas al valor 
 
 
 def draw_scene():
@@ -260,7 +316,7 @@ def draw_scene():
     draw_horizontal_path(9.0)
     glPopMatrix
     
-    draw_block()
+    draw_zigzag_path()
     # Dibujar paredes del comedor con ventanas
     glPushMatrix()
     glTranslatef(10.0, 0.0, 10.0)
