@@ -609,6 +609,15 @@ def draw_escaleras_fachada():
 # ------------------------------------------------------DIBUJADO DE ESCENA-------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------------------------
 def draw_scene():
+    if menu_mode:
+        draw_menu()
+    else:
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glLoadIdentity()
+        glTranslatef(0.0, 0.0, -camera_distance)
+        glRotatef(camera_angle_x, 1.0, 0.0, 0.0)
+        glRotatef(camera_angle_y, 0.0, 1.0, 0.0)
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
@@ -860,6 +869,46 @@ def draw_scene():
     draw_circle(2.0, 100)  
     glPopMatrix()
     # Fin de loza deportiva 
+    draw_guide_line()
+    glutSwapBuffers()
+
+selected_destination = None
+destinations = {
+    'Pabellon A': (-30.0, 0.0, -45.0),
+    'Pabellon B': (35.5, 0.0, -45.0),
+    'Comedor': (0.0, 0.0, 0.0)
+}
+
+def draw_guide_line():
+    if selected_destination is not None:
+        glColor3f(1.0, 0.0, 0.0)  # Color rojo para la línea de guía
+        glLineWidth(2)
+        glBegin(GL_LINES)
+        glVertex3f(0, 0, -camera_distance)  # Posición de la cámara
+        glVertex3f(*selected_destination)   # Posición del destino
+        glEnd()
+
+def draw_menu():
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glLoadIdentity()
+    glColor3f(1.0, 1.0, 1.0)
+
+    # Texto del menú en pantalla completa
+    glRasterPos2f(-0.3, 0.5)
+    for char in "MENU DE DESTINOS":
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ord(char))
+    glRasterPos2f(-0.3, 0.3)
+    for char in "1. Pabellon A":
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ord(char))
+    glRasterPos2f(-0.3, 0.2)
+    for char in "2. Pabellon B":
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ord(char))
+    glRasterPos2f(-0.3, 0.1)
+    for char in "3. Comedor":
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ord(char))
+    glRasterPos2f(-0.3, -0.1)
+    for char in "Presiona Esc para salir":
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ord(char))
     
     glutSwapBuffers()
 
@@ -868,7 +917,7 @@ def mouse_motion(x, y):
     if mouse_left_down:
         delta_x = x - mouse_x
         delta_y = y - mouse_y
-        camera_angle_x += delta_y * 0.2  # Ajustar la velocidad de rotación
+        camera_angle_x += delta_y * 0.2
         camera_angle_y += delta_x * 0.2
         glutPostRedisplay()
     mouse_x = x
@@ -887,21 +936,36 @@ def reshape(width, height):
     glMatrixMode(GL_MODELVIEW)
 
 def keyboard(key, x, y):
-    global camera_distance, camera_angle_x, camera_angle_y
-    if key == b'w':
-        camera_distance -= 1  # Mover hacia adelante
-    elif key == b's':
-        camera_distance += 1  # Mover hacia atrás
-    elif key == b'a':
-        camera_angle_y -= 5  # Rotar a la izquierda
-    elif key == b'd':
-        camera_angle_y += 5  # Rotar a la derecha
-    elif key == b'q':
-        camera_angle_x -= 5  # Rotar hacia arriba
-    elif key == b'e':
-        camera_angle_x += 5  # Rotar hacia abajo
-    glutPostRedisplay()
-
+    global camera_distance, camera_angle_x, camera_angle_y, menu_mode, selected_destination
+    if menu_mode:  # Modo menú activado
+        if key == b'1':
+            selected_destination = destinations['Pabellon A']
+            menu_mode = False
+        elif key == b'2':
+            selected_destination = destinations['Pabellon B']
+            menu_mode = False
+        elif key == b'3':
+            selected_destination = destinations['Comedor']
+            menu_mode = False
+        elif key == b'\x1b':  # Escape
+            menu_mode = False
+        glutPostRedisplay()
+    else:
+        if key == b'm':
+            menu_mode = True
+        elif key == b'w':
+            camera_distance -= 1
+        elif key == b's':
+            camera_distance += 1
+        elif key == b'a':
+            camera_angle_y -= 5
+        elif key == b'd':
+            camera_angle_y += 5
+        elif key == b'q':
+            camera_angle_x -= 5
+        elif key == b'e':
+            camera_angle_x += 5
+        glutPostRedisplay()
 def main():
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
@@ -912,7 +976,7 @@ def main():
     glutReshapeFunc(reshape)
     glutMouseFunc(mouse_button)
     glutMotionFunc(mouse_motion)
-    glutKeyboardFunc(keyboard)  # Capturar entradas del teclado
+    glutKeyboardFunc(keyboard)
     glutMainLoop()
 
 if __name__ == "__main__":
