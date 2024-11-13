@@ -6,9 +6,15 @@ import math
 camera_angle_x = 0
 camera_angle_y = 0
 camera_distance = 40
-mouse_x, mouse_y = 0, 0  # Posición inicial del mouse
-mouse_left_down = False    
-
+mouse_x, mouse_y = 0, 0
+mouse_left_down = False
+menu_mode = False  # Estado del menú
+selected_destination = None
+destinations = {
+    'Pabellon A': (-30.0, 0.0, -45.0),
+    'Pabellon B': (35.5, 0.0, -45.0),
+    'Comedor': (0.0, 0.0, 0.0)
+}
 def init():
     glClearColor(0.5, 0.7, 0.9, 1.0)  # Fondo azul claro
     glEnable(GL_DEPTH_TEST)
@@ -609,25 +615,11 @@ def draw_escaleras_fachada():
 # ------------------------------------------------------DIBUJADO DE ESCENA-------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------------------------
 def draw_scene():
+    global menu_mode
     if menu_mode:
         draw_menu()
     else:
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glLoadIdentity()
-        glTranslatef(0.0, 0.0, -camera_distance)
-        glRotatef(camera_angle_x, 1.0, 0.0, 0.0)
-        glRotatef(camera_angle_y, 0.0, 1.0, 0.0)
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    glLoadIdentity()
-
-    # Movimiento de camara
-    glTranslatef(0.0, 0.0, -camera_distance)
-    glRotatef(camera_angle_x, 1.0, 0.0, 0.0)
-    glRotatef(camera_angle_y, 0.0, 1.0, 0.0)
-
-# COMIENZO DE FACHADA------------------------------------------------------------------------------------
-    draw_paredes_fachada()  # Dibuja las paredes
+        draw_paredes_fachada()  # Dibuja las paredes
     draw_postes_fachada()
     draw_escaleras_fachada()
 
@@ -872,13 +864,9 @@ def draw_scene():
     draw_guide_line()
     glutSwapBuffers()
 
-selected_destination = None
-destinations = {
-    'Pabellon A': (-30.0, 0.0, -45.0),
-    'Pabellon B': (35.5, 0.0, -45.0),
-    'Comedor': (0.0, 0.0, 0.0)
-}
+    
 
+# Función para dibujar la línea de guía desde la cámara hasta el destino seleccionado
 def draw_guide_line():
     if selected_destination is not None:
         glColor3f(1.0, 0.0, 0.0)  # Color rojo para la línea de guía
@@ -888,6 +876,7 @@ def draw_guide_line():
         glVertex3f(*selected_destination)   # Posición del destino
         glEnd()
 
+# Función para dibujar el menú en pantalla completa
 def draw_menu():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
@@ -970,7 +959,7 @@ def main():
     glutInit()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH)
     glutInitWindowSize(1600, 900)
-    glutCreateWindow(b"Comedor con Patio Central")
+    glutCreateWindow(b"UPN")
     init()
     glutDisplayFunc(draw_scene)
     glutReshapeFunc(reshape)
