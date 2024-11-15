@@ -9,6 +9,14 @@ camera_distance = 40
 mouse_x, mouse_y = 0, 0  # Posición inicial del mouse
 mouse_left_down = False    
 
+pabellon_a = (-15.0, 5.5, -15.0)
+losa_deportiva = (65.50, 2.7, -67.5)
+puerta_upn = (-85.0, 7.5, -15.0)
+
+# Variables globales para mostrar/ocultar las líneas
+linea2 = True  # Línea entre Edificio 1 y Edificio 2 (amarillo)
+linea3 = True
+
 def init():
     glClearColor(0.5, 0.7, 0.9, 1.0)  # Fondo azul claro
     glEnable(GL_DEPTH_TEST)
@@ -861,6 +869,32 @@ def draw_scene():
     glPopMatrix()
     # Fin de loza deportiva 
     
+    # Dibujar las líneas si están habilitadas
+    
+
+    if linea2:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(-15.0, 5.5, -15.0)  # Primer punto intermedio
+        glVertex3f(-15.0, 5.7, -30.0)  # Segundo punto intermedio
+        glVertex3f(*pabellon_a)
+        glEnd()
+
+        glColor3f(1.0, 1.0, 0.0)  # Cambia el color a otro (por ejemplo, cian)
+        glBegin(GL_LINES)
+        glVertex3f(-25.0, 5.7, -30.0)  # z = rectitud
+        glVertex3f(-15.0, 5.7, -30.0)  # z = rectitud
+        glEnd()
+
+    if linea3:
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(*losa_deportiva)
+        glEnd()
+
     glutSwapBuffers()
 
 def mouse_motion(x, y):
@@ -887,7 +921,14 @@ def reshape(width, height):
     glMatrixMode(GL_MODELVIEW)
 
 def keyboard(key, x, y):
-    global camera_distance, camera_angle_x, camera_angle_y
+    global camera_distance, camera_angle_x, camera_angle_y, pabellon_a, losa_deportiva, linea2
+    
+    if key == b'2':  # Comprobar si se presiona el número '2' (amarillo)
+        linea2 = not linea2  # Alternar la visibilidad de la línea amarilla
+        glutPostRedisplay()  # Solicitar redibujar la escena
+
+
+
     if key == b'w':
         camera_distance -= 1  # Mover hacia adelante
     elif key == b's':
