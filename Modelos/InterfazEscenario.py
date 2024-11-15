@@ -1,9 +1,9 @@
 import tkinter as tk
 import threading
-import Entorno 
+import upn 
 
 def on_enter():
-    threading.Thread(target=Entorno.main).start()
+    threading.Thread(target=upn.main).start()
 
 root = tk.Tk()
 root.title("Formulario de Entrada")

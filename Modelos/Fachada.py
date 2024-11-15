@@ -13,7 +13,7 @@ def init():
     glClearColor(0.5, 0.7, 0.9, 1.0)  # Color de fondo
     glEnable(GL_DEPTH_TEST)
 
-def draw_paredes():
+def draw_paredes_fachada():
     glColor3f(0.0, 0.0, 0.0)  # Color de las paredes
     wall_positions = [
         (0.0, 1.0, -75.0),  # Pared frontal
@@ -81,7 +81,7 @@ def draw_centro_structure():
         glutSolidCube(1)  # Dibuja un cubo como segmento del rectángulo central
         glPopMatrix()
 
-def draw_Soporte(height):
+def draw_soporte_fachada(height):
     glColor3f(0.0, 0.0, 0.0)  # Color del soporte
     glPushMatrix()
     glTranslatef(0.0, height / 1.5, 0.0)  # Posicionar el soporte
@@ -93,10 +93,10 @@ def draw_multiple_soportes(count, separation, height):
     for i in range(count):
         glPushMatrix()  # Guardar la matriz de transformación actual
         glTranslatef(i * separation, 0.0, 0.0)  # Separar cada soporte en el eje X
-        draw_Soporte(height)  # Llamar a la función que dibuja un solo soporte con altura personalizada
+        draw_soporte_fachada(height)  # Llamar a la función que dibuja un solo soporte con altura personalizada
         glPopMatrix()  # Restaurar la matriz de transformación
 
-def draw_block(position, scale, color=(1.0, 1.0, 1.0)):  # Color blanco por defecto
+def draw_block_fachada(position, scale, color=(1.0, 1.0, 1.0)):  # Color blanco por defecto
     glColor3f(*color)  # Aplicar el color del bloque
     glPushMatrix()
     glTranslatef(*position)  # Posicionar el bloque
@@ -130,7 +130,7 @@ def draw_piso_general(position, scale):
     glEnd()
     glPopMatrix()
 
-def draw_postes():
+def draw_postes_fachada():
     glColor3f(0.0, 0.0, 0.0)  # Color de los postes
     # Listas de posiciones y escalas para los postes
     positions = [
@@ -171,7 +171,7 @@ def draw_postes():
         glutSolidCube(1)     # Dibujar el cubo que representa el poste
         glPopMatrix()
 
-def draw_stairs():
+def draw_escaleras_fachada():
     stair_width = 25
     stair_depth = 1
     stair_height = 0.6  # Escalones más altos
@@ -190,25 +190,35 @@ def draw_stairs():
 def draw_scene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
+
+    # Rota toda la escena para que la fachada mire hacia la cámara inicial
+
     glTranslatef(0.0, 0.0, -camera_distance)
     glRotatef(camera_angle_x, 1.0, 0.0, 0.0)
     glRotatef(camera_angle_y, 0.0, 1.0, 0.0)
 
-    draw_paredes()  # Dibuja las paredes
-    draw_postes()
-    draw_stairs()
+    draw_paredes_fachada()
+    draw_contorno_structure()
+    draw_centro_structure()
+    draw_multiple_soportes(5, 10, 20)  # Ejemplo de uso
+    draw_postes_fachada()
+    draw_escaleras_fachada()
 
-    draw_block((-90, 9.5, -40.0), (0.5, 6.0, 30.0))
-    draw_block((-90.0, 9.5, 20.0), (0.5, 6.0, 40.0))
-    draw_block((-86.2, 8.5, -25.0), (8, 16, 0.5))
-    draw_block((-86.2, 8.5, 0.0), (8, 16, 0.5))
-    draw_block((-90, 15.5, -40.0), (0.5, 2, 30.0))
-    draw_block((-90.0, 15.5, 20.0), (0.5, 2, 40.0))
-    draw_block((-90, 11.5, -65.0), (0.5, 10, 20.0))
-    draw_block((90.0, 7, -17.0), (0.5, 13, 116.0))
-    draw_block((0.0, 9, -75.0), (180, 15, 0.5))
-    draw_block((-90.0, 17.5, -12.5), (0.5,6.0, 25.5), (1.0, 1.0, 0.0))  # Color amarillo
-    draw_block((-86.2, 16.5, -12.5), (7, 0.5, 25)) #techo de puerta principal
+    draw_paredes_fachada()  # Dibuja las paredes
+    draw_postes_fachada()
+    draw_escaleras_fachada()
+
+    draw_block_fachada((-90, 9.5, -40.0), (0.5, 6.0, 30.0))
+    draw_block_fachada((-90.0, 9.5, 20.0), (0.5, 6.0, 40.0))
+    draw_block_fachada((-86.2, 8.5, -25.0), (8, 16, 0.5))
+    draw_block_fachada((-86.2, 8.5, 0.0), (8, 16, 0.5))
+    draw_block_fachada((-90, 15.5, -40.0), (0.5, 2, 30.0))
+    draw_block_fachada((-90.0, 15.5, 20.0), (0.5, 2, 40.0))
+    draw_block_fachada((-90, 11.5, -65.0), (0.5, 10, 20.0))
+    draw_block_fachada((90.0, 7, -17.0), (0.5, 13, 116.0))
+    draw_block_fachada((0.0, 9, -75.0), (180, 15, 0.5))
+    draw_block_fachada((-90.0, 17.5, -12.5), (0.5,6.0, 25.5), (1.0, 1.0, 0.0))  # Color amarillo
+    draw_block_fachada((-86.2, 16.5, -12.5), (7, 0.5, 25)) #techo de puerta principal
 
     draw_piso_entrada((-86.2, 6.5, -12.5), (4, 1.0, 13))
     draw_piso_general((0, 0.5, -17.5), (90, 1.0, 58))
@@ -246,6 +256,21 @@ def draw_scene():
     draw_multiple_soportes(5, 0.5, 7.5)  # Dibuja 5 soportes con separación de 0.5 y altura de 6.0
     glPopMatrix()
     glutSwapBuffers()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def mouse_motion(x, y):
     global camera_angle_x, camera_angle_y, mouse_x, mouse_y
