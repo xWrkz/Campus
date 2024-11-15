@@ -1068,6 +1068,5 @@ def main():
     glutMotionFunc(mouse_motion)
     glutKeyboardFunc(keyboard)  # Capturar entradas del teclado
     glutMainLoop()
-
 if __name__ == "__main__":
     main()
