@@ -9,13 +9,17 @@ camera_distance = 40
 mouse_x, mouse_y = 0, 0  # Posición inicial del mouse
 mouse_left_down = False    
 
-pabellon_a = (-15.0, 5.5, -15.0)
-losa_deportiva = (65.50, 2.7, -67.5)
+# Punto de partida
 puerta_upn = (-85.0, 7.5, -15.0)
 
 # Variables globales para mostrar/ocultar las líneas
-linea2 = True  # Línea entre Edificio 1 y Edificio 2 (amarillo)
-linea3 = True
+area_administrativa = False
+pabellon_a = False
+area_verde = False
+cafetin = False
+pabellon_b = False
+biblioteca = False
+losa_deportiva = False
 
 def init():
     glClearColor(0.5, 0.7, 0.9, 1.0)  # Fondo azul claro
@@ -177,18 +181,34 @@ def draw_building():
     
     # Dibujar ventanas en la fachada
     glColor3f(0.3, 0.3, 0.9)  # Color de las ventanas (azul oscuro)
-    for x in [-3.0, 0.0, 3.0]:  # Posición horizontal de las ventanas
-        for y in [2.0, 4.0, 6.0]:  # Posición vertical de las ventanas
+    for x in [-5.0, 0.0, 5.0]:  # Posición horizontal de las ventanas (más separadas)
+        for y in [2.0, 2.5, 3.0]:  # Posición vertical de las ventanas 
             glPushMatrix()
-            glTranslatef(x, y, 2.05)  # Posicionar ventanas ligeramente fuera de la fachada
-            glScalef(1.5, 1.5, 0.1)  # Tamaño de las ventanas
+            glTranslatef(x, y, 7.6)  # Posicionar ventanas 
+            glScalef(2.5, 1.0, 0.5)  # Tamaño de las ventanas 
+            glutSolidCube(1)
+            glPopMatrix()
+        
+        # Ventanas adicionales más abajo
+        for y in [-2.0, -1.5, -1.0]:  
+            glPushMatrix()
+            glTranslatef(x, y, 7.6)  
+            glScalef(2.5, 1.0, 0.5)  
             glutSolidCube(1)
             glPopMatrix()
 
-    # Puerta de entrada
+    # Puerta de entrada en el lado izquierdo
     glColor3f(0.4, 0.2, 0.1)  # Color de la puerta (marrón)
     glPushMatrix()
     glTranslatef(-15.0, -3.5, 7.5)  # Posicionar la puerta en la parte inferior del edificio
+    glScalef(2.0, 3.0, 0.1)  # Tamaño de la puerta
+    glutSolidCube(1)
+    glPopMatrix()
+
+    # Puerta de entrada en el lado derecho
+    glColor3f(0.4, 0.2, 0.1)  # Color de la puerta (marrón)
+    glPushMatrix()
+    glTranslatef(15.0, -3.5, 7.5)  # Posicionar la puerta en el lado opuesto del edificio
     glScalef(2.0, 3.0, 0.1)  # Tamaño de la puerta
     glutSolidCube(1)
     glPopMatrix()
@@ -219,18 +239,107 @@ def draw_Upn(position, scale, rotate, color=(1.0, 1.0, 1.0)):  # Color blanco po
     glScalef(*scale)         # Escalar el bloque
     glutSolidCube(1)         # Dibuja un cubo sólido
     glPopMatrix()
-    
-def draw_block():
-    # Dibuja un bloque largo y alto encima del camino
-    glColor3f(0.6, 0.4, 0.2)  # Color marrón para el bloque
+
+def draw_zigzag_path():
     glPushMatrix()
-    
-    # Posicionar el bloque para que esté alineado con el camino vertical
-    glTranslatef(-7.0, 3.5, 0.0)  # Moverse al lado del camino vertical
-    glScalef(1, 0.5, 50.0)  # Tamaño del bloque (alto y largo)
-    glutSolidCube(1)
-    
+    glTranslatef(-1.0 + 5.0 , 3.0, -36)  # Eleva el bloque más alto sobre el suelo
+    glLineWidth(24.0)  # Aumenta el grosor de las líneas
+
+    # Dimensiones del bloque y los triángulos
+    block_length = 66.0    # Largo del bloque
+    block_width = 1.4      # Ancho del bloque
+    block_height = 2.0     # Altura del bloque
+    triangle_width = 5.0   # Ancho de los triángulos laterales
+    triangle_height = 10.0  # Altura de los triángulos laterales
+
+    # Cuerpo principal del bloque rectangular (cara superior sin borde)
+    glColor3f(0.0, 1.0, 0.0)  # Verde para la cara superior
+    glBegin(GL_QUADS)
+    glVertex3f(-block_width, block_height, 0)
+    glVertex3f(block_width, block_height, 0)
+    glVertex3f(block_width, block_height, block_length)
+    glVertex3f(-block_width, block_height, block_length)
+    glEnd()
+
+    # Colorear los lados y la cara inferior en gris
+    glColor3f(0.5, 0.5, 0.5)  # Gris
+    glBegin(GL_QUADS)
+    # Cara inferior
+    glVertex3f(-block_width, 0, 0)
+    glVertex3f(block_width, 0, 0)
+    glVertex3f(block_width, 0, block_length)
+    glVertex3f(-block_width, 0, block_length)
+
+    # Caras laterales del bloque
+    glVertex3f(-block_width, 0, 0)
+    glVertex3f(-block_width, block_height, 0)
+    glVertex3f(-block_width, block_height, block_length)
+    glVertex3f(-block_width, 0, block_length)
+
+    glVertex3f(block_width, 0, 0)
+    glVertex3f(block_width, block_height, 0)
+    glVertex3f(block_width, block_height, block_length)
+    glVertex3f(block_width, 0, block_length)
+    glEnd()
+
+    # Triángulos en zigzag en el borde derecho (sin borde superior)
+    num_zigzags = 3
+    for i in range(num_zigzags):
+        z_position = i * (block_length / num_zigzags)
+
+        # Cara superior del triángulo en verde
+        glColor3f(0.0, 1.0, 0.0)  # Verde para la cara superior
+        glBegin(GL_TRIANGLES)
+        glVertex3f(block_width, block_height, z_position)
+        glVertex3f(block_width + triangle_width, block_height, z_position + triangle_height)
+        glVertex3f(block_width, block_height, z_position + triangle_height * 2)
+        glEnd()
+
+        # Pintar los lados y la base del triángulo en gris
+        glColor3f(0.5, 0.5, 0.5)  # Gris para los lados y la base
+        glBegin(GL_QUADS)
+        # Cara lateral derecha hacia el suelo
+        glVertex3f(block_width + triangle_width, block_height, z_position + triangle_height)
+        glVertex3f(block_width + triangle_width, 0, z_position + triangle_height)
+        glVertex3f(block_width, 0, z_position + triangle_height * 2)
+        glVertex3f(block_width, block_height, z_position + triangle_height * 2)
+
+        # Cara lateral izquierda hacia el suelo
+        glVertex3f(block_width, block_height, z_position)
+        glVertex3f(block_width, 0, z_position)
+        glVertex3f(block_width, 0, z_position + triangle_height * 2)
+        glVertex3f(block_width, block_height, z_position + triangle_height * 2)
+
+        # Base del triángulo en el suelo
+        glVertex3f(block_width, 0, z_position)
+        glVertex3f(block_width + triangle_width, 0, z_position + triangle_height)
+        glVertex3f(block_width, 0, z_position + triangle_height * 2)
+        glEnd()
+
+        # Cara trasera del triángulo (cierra el triángulo en la parte trasera)
+        glBegin(GL_QUADS)
+        glVertex3f(block_width, block_height, z_position)
+        glVertex3f(block_width + triangle_width, block_height, z_position + triangle_height)
+        glVertex3f(block_width + triangle_width, 0, z_position + triangle_height)
+        glVertex3f(block_width, 0, z_position)
+        glEnd()
+
+        # Bordes horizontales en la parte superior del triángulo
+        glColor3f(0.5, 0.5, 0.5)  # Gris para los bordes horizontales
+        # Borde superior en el lado derecho del triángulo
+        glBegin(GL_LINES)
+        glVertex3f(block_width + triangle_width, block_height, z_position + triangle_height)
+        glVertex3f(block_width, block_height, z_position + triangle_height * 2)
+        glEnd()
+
+        # Borde superior en el lado izquierdo del triángulo
+        glBegin(GL_LINES)
+        glVertex3f(block_width, block_height, z_position)
+        glVertex3f(block_width + triangle_width, block_height, z_position + triangle_height)
+        glEnd()
+
     glPopMatrix()
+    glLineWidth(1.0)  # Restablece el grosor de las líneas al valor 
 
 # COMIENZO LOSA DEPORTIVA
 def draw_half_circle(radius, segments):
@@ -558,6 +667,42 @@ def draw_piso_general(position, scale):
     glEnd()
     glPopMatrix()
 
+def draw_aparcamiento_area():
+    # Dibujar primera sección de líneas de aparcamiento
+    glColor3f(1.0, 1.0, 1.0)  # Color blanco para las líneas de aparcamiento
+    line_spacing = 10.0  # Espacio entre líneas de aparcamiento
+    line_length = 13.0  # Longitud de cada línea, ajustada al ancho del aparcamiento
+    for i in range(-9, 10):  # Ajusta el rango para cubrir el ancho del aparcamiento
+        glPushMatrix()
+        glTranslatef(i * line_spacing, 2.5, 4.0)  # Mueve las líneas junto con el suelo del aparcamiento
+        glBegin(GL_LINES)
+        glVertex3f(0.0, 0.0, -line_length / 2)  # Ajusta el tamaño para que cubra todo el suelo
+        glVertex3f(0.0, 0.0, line_length / 2)
+        glEnd()
+        glPopMatrix()
+
+    # Dibujar segunda sección de líneas de aparcamiento
+    offset_1 = 30.0  # Ajusta este valor para mover las líneas a la derecha o izquierda
+    for i in range(0, 6):  # Ajusta el rango para cubrir el ancho del aparcamiento
+        glPushMatrix()
+        glTranslatef(i * line_spacing + offset_1, 2.5, 32.0)  # Añade el offset para mover las líneas
+        glBegin(GL_LINES)
+        glVertex3f(0.0, 0.0, -line_length / 2)  # Ajusta el tamaño para que cubra todo el suelo
+        glVertex3f(0.0, 0.0, line_length / 2)
+        glEnd()
+        glPopMatrix()
+
+    # Dibujar tercera sección de líneas de aparcamiento
+    offset_2 = -80.0  # Ajusta este valor para mover las líneas al lado de la primera sección
+    for i in range(0, 6):  # Ajusta el rango para cubrir el ancho del aparcamiento
+        glPushMatrix()
+        glTranslatef(i * line_spacing + offset_2, 2.5, 32.0)  # Añade el offset para la nueva sección
+        glBegin(GL_LINES)
+        glVertex3f(0.0, 0.0, -line_length / 2)  # Ajusta el tamaño para que cubra todo el suelo
+        glVertex3f(0.0, 0.0, line_length / 2)
+        glEnd()
+        glPopMatrix()
+
 def draw_postes_fachada():
     glColor3f(0.0, 0.0, 0.0)  # Color de los postes
     # Listas de posiciones y escalas para los postes
@@ -629,6 +774,8 @@ def draw_scene():
     draw_paredes_fachada()  # Dibuja las paredes
     draw_postes_fachada()
     draw_escaleras_fachada()
+    
+    draw_aparcamiento_area()
 
     draw_block_fachada((-90, 9.5, -40.0), (0.5, 6.0, 30.0))
     draw_block_fachada((-90.0, 9.5, 20.0), (0.5, 6.0, 40.0))
@@ -697,7 +844,13 @@ def draw_scene():
     glTranslatef(0.0, 0.0, 0.0)
     glRotatef(90, 0.0, 1.0, 0.0)
     draw_vertical_path(65)
-    draw_vertical_path(-10)
+    draw_vertical_path(8)
+    draw_zigzag_path()
+    draw_Upn((7,3,10),(2,2,3),(0,0,0,0))
+    draw_Upn((7.3,5,9),(1,5,0.5),(0,0,0,0),(1,1,0))
+    draw_Upn((7.3,5,9.8),(1,5,0.5),(0,0,0,0),(1,1,0))
+    draw_Upn((7.3,9.1,6),(1,1.8,0.5),(18,1,0,0),(1,1,0))
+    draw_Upn((7.3,3.2,11.9),(1,1.8,0.5),(-18,1,0,0),(1,1,0))
     draw_vertical_path(30)
     glPopMatrix()
     
@@ -705,7 +858,6 @@ def draw_scene():
     glPushMatrix()
     glTranslatef(0.0, 0.0, 0.0)
     glRotatef(90, 0.0, 1.0, 0.0)
-    draw_block()
     glPopMatrix()
 
     # Caminos delgados
@@ -747,11 +899,7 @@ def draw_scene():
     glPopMatrix()
     # ------------------------ PABELLONES------------------------
 
-    draw_Upn((-5,3,10),(2,2,3),(0,0,0,0))
-    draw_Upn((-5.5,5,9),(1,5,0.5),(0,0,0,0),(1,1,0))
-    draw_Upn((-5.5,5,9.8),(1,5,0.5),(0,0,0,0),(1,1,0))
-    draw_Upn((-5.5,9.1,6),(1,1.8,0.5),(18,1,0,0),(1,1,0))
-    draw_Upn((-5.5,3.2,11.9),(1,1.8,0.5),(-18,1,0,0),(1,1,0))
+    
 # FIN DE TERRENO UNIVERDSIDAD ------------------------------------------------------------------------
 
 # COMIENZO DE LOSA DEPORTIVA
@@ -870,29 +1018,119 @@ def draw_scene():
     # Fin de loza deportiva 
     
     # Dibujar las líneas si están habilitadas
-    
-
-    if linea2:
+    if area_administrativa:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(-34.9, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(-35.0, 5.7, -50.0)  # z = rectitud
+        glVertex3f(-35.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+        
+    if pabellon_a:
         # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
         glColor3f(1.0, 1.0, 0.0)
         glBegin(GL_LINES)
         glVertex3f(*puerta_upn)
         glVertex3f(-15.0, 5.5, -15.0)  # Primer punto intermedio
-        glVertex3f(-15.0, 5.7, -30.0)  # Segundo punto intermedio
-        glVertex3f(*pabellon_a)
         glEnd()
 
-        glColor3f(1.0, 1.0, 0.0)  # Cambia el color a otro (por ejemplo, cian)
+        glColor3f(1.0, 1.0, 0.0)
         glBegin(GL_LINES)
         glVertex3f(-25.0, 5.7, -30.0)  # z = rectitud
         glVertex3f(-15.0, 5.7, -30.0)  # z = rectitud
         glEnd()
 
-    if linea3:
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(-15.0, 5.7, -30.0)  # z = rectitud
+        glVertex3f(-15.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+
+    if area_verde:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(0.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(7.0, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(0.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(7.0, 5.7, -39.0)  # z = rectitud
+        glVertex3f(7.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+
+    if cafetin:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
         glColor3f(1.0, 1.0, 0.0)
         glBegin(GL_LINES)
         glVertex3f(*puerta_upn)
-        glVertex3f(*losa_deportiva)
+        glVertex3f(25.0, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(25.0, 5.7, -39.0)  # z = rectitud
+        glVertex3f(25.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(35.0, 5.7, -39.0)  # z = rectitud/+derecha
+        glVertex3f(25.0, 5.7, -39.0)  # z = rectitud/+derecha
+        glEnd()
+
+    if pabellon_b:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(0.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(25.0, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(0.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(25.0, 5.7, -30.0)  # z = rectitud
+        glVertex3f(25.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+
+        glColor3f(0.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(35.0, 5.7, -30.0)  # z = rectitud/+derecha
+        glVertex3f(25.0, 5.7, -30.0)  # z = rectitud/+derecha
+        glEnd()
+
+    if biblioteca:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(38.0, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(38.0, 5.7, -39.0)  # z = rectitud
+        glVertex3f(38.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+
+    if losa_deportiva:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(59.0, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(59.0, 5.7, -35.0)  # z = rectitud
+        glVertex3f(59.0, 5.5, -15.0)  # z = rectitud
         glEnd()
 
     glutSwapBuffers()
@@ -921,13 +1159,35 @@ def reshape(width, height):
     glMatrixMode(GL_MODELVIEW)
 
 def keyboard(key, x, y):
-    global camera_distance, camera_angle_x, camera_angle_y, pabellon_a, losa_deportiva, linea2
+    global camera_distance, camera_angle_x, camera_angle_y, area_administrativa, pabellon_a, area_verde, cafetin, pabellon_b, biblioteca, losa_deportiva
     
-    if key == b'2':  # Comprobar si se presiona el número '2' (amarillo)
-        linea2 = not linea2  # Alternar la visibilidad de la línea amarilla
-        glutPostRedisplay()  # Solicitar redibujar la escena
+    if key == b'1': 
+        area_administrativa = not area_administrativa 
+        glutPostRedisplay()  
 
+    if key == b'2':  
+        pabellon_a = not pabellon_a 
+        glutPostRedisplay()  
 
+    if key == b'3': 
+        area_verde = not area_verde  
+        glutPostRedisplay()  
+
+    if key == b'4':  
+        pabellon_b = not pabellon_b  
+        glutPostRedisplay() 
+    
+    if key == b'5':  
+        cafetin = not cafetin  
+        glutPostRedisplay()
+
+    if key == b'6':  
+        biblioteca = not biblioteca  
+        glutPostRedisplay()
+
+    if key == b'7':  
+        losa_deportiva = not losa_deportiva  
+        glutPostRedisplay()
 
     if key == b'w':
         camera_distance -= 1  # Mover hacia adelante
@@ -955,6 +1215,5 @@ def main():
     glutMotionFunc(mouse_motion)
     glutKeyboardFunc(keyboard)  # Capturar entradas del teclado
     glutMainLoop()
-
 if __name__ == "__main__":
     main()

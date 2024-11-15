@@ -9,15 +9,17 @@ camera_distance = 40
 mouse_x, mouse_y = 0, 0  # Posición inicial del mouse
 mouse_left_down = False    
 
-pabellon_a = (-15.0, 5.5, -15.0)
-losa_deportiva = (65.50, 2.7, -53.5)
+# Punto de partida
 puerta_upn = (-85.0, 7.5, -15.0)
-pabellon_b = (-15.0, 5.5, -1.5)
 
 # Variables globales para mostrar/ocultar las líneas
-linea2 = True  # Línea entre Edificio 1 y Edificio 2 (amarillo)
-linea3 = True
-linea4 = True
+area_administrativa = False
+pabellon_a = False
+area_verde = False
+cafetin = False
+pabellon_b = False
+biblioteca = False
+losa_deportiva = False
 
 def init():
     glClearColor(0.5, 0.7, 0.9, 1.0)  # Fondo azul claro
@@ -210,7 +212,6 @@ def draw_building():
     glScalef(2.0, 3.0, 0.1)  # Tamaño de la puerta
     glutSolidCube(1)
     glPopMatrix()
-
 
 def draw_vertical_path(offset_x):
     # Color del camino vertical (gris claro)
@@ -673,7 +674,7 @@ def draw_aparcamiento_area():
     line_length = 13.0  # Longitud de cada línea, ajustada al ancho del aparcamiento
     for i in range(-9, 10):  # Ajusta el rango para cubrir el ancho del aparcamiento
         glPushMatrix()
-        glTranslatef(i * line_spacing, 4.01, 4.0)  # Mueve las líneas junto con el suelo del aparcamiento
+        glTranslatef(i * line_spacing, 2.5, 4.0)  # Mueve las líneas junto con el suelo del aparcamiento
         glBegin(GL_LINES)
         glVertex3f(0.0, 0.0, -line_length / 2)  # Ajusta el tamaño para que cubra todo el suelo
         glVertex3f(0.0, 0.0, line_length / 2)
@@ -684,7 +685,7 @@ def draw_aparcamiento_area():
     offset_1 = 30.0  # Ajusta este valor para mover las líneas a la derecha o izquierda
     for i in range(0, 6):  # Ajusta el rango para cubrir el ancho del aparcamiento
         glPushMatrix()
-        glTranslatef(i * line_spacing + offset_1, 4.01, 32.0)  # Añade el offset para mover las líneas
+        glTranslatef(i * line_spacing + offset_1, 2.5, 32.0)  # Añade el offset para mover las líneas
         glBegin(GL_LINES)
         glVertex3f(0.0, 0.0, -line_length / 2)  # Ajusta el tamaño para que cubra todo el suelo
         glVertex3f(0.0, 0.0, line_length / 2)
@@ -695,7 +696,7 @@ def draw_aparcamiento_area():
     offset_2 = -80.0  # Ajusta este valor para mover las líneas al lado de la primera sección
     for i in range(0, 6):  # Ajusta el rango para cubrir el ancho del aparcamiento
         glPushMatrix()
-        glTranslatef(i * line_spacing + offset_2, 4.01, 32.0)  # Añade el offset para la nueva sección
+        glTranslatef(i * line_spacing + offset_2, 2.5, 32.0)  # Añade el offset para la nueva sección
         glBegin(GL_LINES)
         glVertex3f(0.0, 0.0, -line_length / 2)  # Ajusta el tamaño para que cubra todo el suelo
         glVertex3f(0.0, 0.0, line_length / 2)
@@ -1017,31 +1018,119 @@ def draw_scene():
     # Fin de loza deportiva 
     
     # Dibujar las líneas si están habilitadas
-    
-
-    if linea2:
+    if area_administrativa:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(-34.9, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(-35.0, 5.7, -50.0)  # z = rectitud
+        glVertex3f(-35.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+        
+    if pabellon_a:
         # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
         glColor3f(1.0, 1.0, 0.0)
         glBegin(GL_LINES)
         glVertex3f(*puerta_upn)
         glVertex3f(-15.0, 5.5, -15.0)  # Primer punto intermedio
-        glVertex3f(-15.0, 5.7, -30.0)  # Segundo punto intermedio
-        glVertex3f(*pabellon_a)
         glEnd()
 
-        glColor3f(1.0, 1.0, 0.0)  # Cambia el color a otro (por ejemplo, cian)
+        glColor3f(1.0, 1.0, 0.0)
         glBegin(GL_LINES)
         glVertex3f(-25.0, 5.7, -30.0)  # z = rectitud
         glVertex3f(-15.0, 5.7, -30.0)  # z = rectitud
         glEnd()
 
-    if linea3:
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(-15.0, 5.7, -30.0)  # z = rectitud
+        glVertex3f(-15.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+
+    if area_verde:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(0.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(7.0, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(0.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(7.0, 5.7, -39.0)  # z = rectitud
+        glVertex3f(7.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+
+    if cafetin:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
         glColor3f(1.0, 1.0, 0.0)
         glBegin(GL_LINES)
         glVertex3f(*puerta_upn)
-        glVertex3f(60.3, 5.5, -15.0)  # Primer punto intermedio
-        glVertex3f(60.0, 5.7, -15.0)
-        glVertex3f(*losa_deportiva)
+        glVertex3f(25.0, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(25.0, 5.7, -39.0)  # z = rectitud
+        glVertex3f(25.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(35.0, 5.7, -39.0)  # z = rectitud/+derecha
+        glVertex3f(25.0, 5.7, -39.0)  # z = rectitud/+derecha
+        glEnd()
+
+    if pabellon_b:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(0.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(25.0, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(0.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(25.0, 5.7, -30.0)  # z = rectitud
+        glVertex3f(25.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+
+        glColor3f(0.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(35.0, 5.7, -30.0)  # z = rectitud/+derecha
+        glVertex3f(25.0, 5.7, -30.0)  # z = rectitud/+derecha
+        glEnd()
+
+    if biblioteca:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(38.0, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(38.0, 5.7, -39.0)  # z = rectitud
+        glVertex3f(38.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+
+    if losa_deportiva:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(59.0, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(59.0, 5.7, -35.0)  # z = rectitud
+        glVertex3f(59.0, 5.5, -15.0)  # z = rectitud
         glEnd()
 
     glutSwapBuffers()
@@ -1070,15 +1159,35 @@ def reshape(width, height):
     glMatrixMode(GL_MODELVIEW)
 
 def keyboard(key, x, y):
-    global camera_distance, camera_angle_x, camera_angle_y,linea2, linea3
+    global camera_distance, camera_angle_x, camera_angle_y, area_administrativa, pabellon_a, area_verde, cafetin, pabellon_b, biblioteca, losa_deportiva
     
-    if key == b'2':  # Comprobar si se presiona el número '2' (amarillo)
-        linea2 = not linea2  # Alternar la visibilidad de la línea amarilla
-        glutPostRedisplay()  # Solicitar redibujar la escena
+    if key == b'1': 
+        area_administrativa = not area_administrativa 
+        glutPostRedisplay()  
 
-    if key == b'3':
-        linea3 = not linea3
-        glutPostRedisplay
+    if key == b'2':  
+        pabellon_a = not pabellon_a 
+        glutPostRedisplay()  
+
+    if key == b'3': 
+        area_verde = not area_verde  
+        glutPostRedisplay()  
+
+    if key == b'4':  
+        pabellon_b = not pabellon_b  
+        glutPostRedisplay() 
+    
+    if key == b'5':  
+        cafetin = not cafetin  
+        glutPostRedisplay()
+
+    if key == b'6':  
+        biblioteca = not biblioteca  
+        glutPostRedisplay()
+
+    if key == b'7':  
+        losa_deportiva = not losa_deportiva  
+        glutPostRedisplay()
 
     if key == b'w':
         camera_distance -= 1  # Mover hacia adelante
