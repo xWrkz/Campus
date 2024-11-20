@@ -15,28 +15,144 @@ camera_angle_y = 0
 camera_distance = 40
 mouse_x, mouse_y = 0, 0  # Posición inicial del mouse
 mouse_left_down = False    
+glosario_window = None
+scroll_offset = 0  # Posición del scroll (mueve los botones hacia arriba o abajo)
 
 pabellon_a = (-15.0, 5.5, -15.0)
 losa_deportiva = (65.50, 2.7, -53.5)
 puerta_upn = (-85.0, 7.5, -15.0)
-pabellon_b = (-15.0, 5.5, -1.5)
+pabellon_b = (20.0, 5.5, -15)
 
 # Variables globales para mostrar/ocultar las líneas
 linea2 = False  # Línea entre Edificio 1 y Edificio 2 (amarillo)
 linea3 = False
 linea4 = False
+button_areas = []  # Coordenadas de los botones
 
 # Variables globales
 main_window = None
 menu_window = None
-menu_items = ["1-.PABELLÓN", "BIBLIOTECA", "LCOM1", "LCOM2", "LAB ELECTRÓNICA", "AUDITORIO", "COMPLEJO DEPORTIVO", "ESTACIONAMIENTO"]
-
+menu_items = [
+    {
+        "label": "PABELLÓN A",
+        "expanded": False,
+        "children": [
+            {
+                "label": "Piso 2",
+                "expanded": False,
+                "children": [
+                    {"label": "A202", "glosario": {"piso": "2", "posicion": "Norte", "lado": "Izquierdo"}},
+                    {"label": "A201", "glosario": {"piso": "2", "posicion": "Norte", "lado": "Derecho"}},
+                    {"label": "A204", "glosario": {"piso": "2", "posicion": "Sur", "lado": "Izquierdo"}},
+                    {"label": "Laboratorio Mecatronica", "glosario": {"piso": "2", "posicion": "Sur", "lado": "Derecho"}},
+                    {"label": "A206", "glosario": {"piso": "2", "posicion": "Este", "lado": "Izquierdo"}},
+                    {"label": "Almacén de aulas y lab", "glosario": {"piso": "2", "posicion": "Este", "lado": "Derecho"}},
+                    {"label": "Lab. Física", "glosario": {"piso": "2", "posicion": "Oeste", "lado": "Izquierdo"}},
+                    {"label": "Taller Arquitectura y Dibujo 1", "glosario": {"piso": "2", "posicion": "Oeste", "lado": "Derecho"}},
+                    {"label": "Laboratorio de Química 1", "glosario": {"piso": "2", "posicion": "Centro", "lado": "Izquierdo"}},
+                    {"label": "LCOM1", "glosario": {"piso": "2", "posicion": "Centro", "lado": "Derecho"}},
+                    {"label": "Almacén", "glosario": {"piso": "2", "posicion": "Noroeste", "lado": "Izquierdo"}}
+                ]
+            },
+            {
+                "label": "Piso 3",
+                "expanded": False,
+                "children": [
+                    {"label": "A302", "glosario": {"piso": "3", "posicion": "Norte", "lado": "Izquierdo"}},
+                    {"label": "A301", "glosario": {"piso": "3", "posicion": "Norte", "lado": "Derecho"}},
+                    {"label": "A304", "glosario": {"piso": "3", "posicion": "Sur", "lado": "Izquierdo"}},
+                    {"label": "A303", "glosario": {"piso": "3", "posicion": "Sur", "lado": "Derecho"}},
+                    {"label": "A305", "glosario": {"piso": "3", "posicion": "Este", "lado": "Izquierdo"}},
+                    {"label": "Laboratorio de Física 2", "glosario": {"piso": "3", "posicion": "Este", "lado": "Derecho"}},
+                    {"label": "Ambiente de preparado común", "glosario": {"piso": "3", "posicion": "Oeste", "lado": "Izquierdo"}},
+                    {"label": "A306", "glosario": {"piso": "3", "posicion": "Oeste", "lado": "Derecho"}},
+                    {"label": "Laboratorio de Química 2", "glosario": {"piso": "3", "posicion": "Centro", "lado": "Izquierdo"}},
+                    {"label": "Taller de Arquitectura y Dibujo 2", "glosario": {"piso": "3", "posicion": "Centro", "lado": "Derecho"}},
+                    {"label": "A308", "glosario": {"piso": "3", "posicion": "Noroeste", "lado": "Izquierdo"}}
+                ]
+            },
+            {
+                "label": "Piso 4",
+                "expanded": False,
+                "children": [
+                    {"label": "A402", "glosario": {"piso": "4", "posicion": "Norte", "lado": "Izquierdo"}},
+                    {"label": "A401", "glosario": {"piso": "4", "posicion": "Norte", "lado": "Derecho"}},
+                    {"label": "A404", "glosario": {"piso": "4", "posicion": "Sur", "lado": "Izquierdo"}},
+                    {"label": "A403", "glosario": {"piso": "4", "posicion": "Sur", "lado": "Derecho"}},
+                    {"label": "A405", "glosario": {"piso": "4", "posicion": "Este", "lado": "Izquierdo"}},
+                    {"label": "Oficina Banner", "glosario": {"piso": "4", "posicion": "Este", "lado": "Derecho"}},
+                    {"label": "LCOM2", "glosario": {"piso": "4", "posicion": "Oeste", "lado": "Izquierdo"}},
+                    {"label": "LCOM3", "glosario": {"piso": "4", "posicion": "Oeste", "lado": "Derecho"}},
+                    {"label": "Lactario", "glosario": {"piso": "4", "posicion": "Centro", "lado": "Izquierdo"}},
+                    {"label": "LCOM4-Redes", "glosario": {"piso": "4", "posicion": "Centro", "lado": "Izquierdo"}}
+                ]
+            }
+        ]
+    },
+    {
+        "label": "PABELLÓN B",
+        "expanded": False,
+        "children": [
+            {
+                "label": "Piso 2",
+                "expanded": False,
+                "children": [
+                    {"label": "B201", "glosario": {"piso": "2", "posicion": "Norte", "lado": "Izquierdo"}},
+                    {"label": "B202", "glosario": {"piso": "2", "posicion": "Norte", "lado": "Derecho"}},
+                    {"label": "B203", "glosario": {"piso": "2", "posicion": "Sur", "lado": "Izquierdo"}},
+                    {"label": "B204", "glosario": {"piso": "2", "posicion": "Sur", "lado": "Derecho"}},
+                    {"label": "LCOM5", "glosario": {"piso": "2", "posicion": "Este", "lado": "Izquierdo"}},
+                    {"label": "LAUTO", "glosario": {"piso": "2", "posicion": "Este", "lado": "Derecho"}},
+                    {"label": "LCOM6", "glosario": {"piso": "2", "posicion": "Oeste", "lado": "Izquierdo"}},
+                    {"label": "B205", "glosario": {"piso": "2", "posicion": "Oeste", "lado": "Derecho"}},
+                    {"label": "B206", "glosario": {"piso": "2", "posicion": "Centro", "lado": "Izquierdo"}}
+                ]
+            },
+            {
+                "label": "Piso 3",
+                "expanded": False,
+                "children": [
+                    {"label": "Taller de Arquitectura y dibujo 4", "glosario": {"piso": "3", "posicion": "Norte", "lado": "Izquierdo"}},
+                    {"label": "B301", "glosario": {"piso": "3", "posicion": "Norte", "lado": "Derecho"}},
+                    {"label": "B304", "glosario": {"piso": "3", "posicion": "Sur", "lado": "Izquierdo"}},
+                    {"label": "B303", "glosario": {"piso": "3", "posicion": "Sur", "lado": "Derecho"}},
+                    {"label": "B305", "glosario": {"piso": "3", "posicion": "Este", "lado": "Izquierdo"}},
+                    {"label": "B306", "glosario": {"piso": "3", "posicion": "Este", "lado": "Derecho"}},
+                    {"label": "LCOM7", "glosario": {"piso": "3", "posicion": "Oeste", "lado": "Izquierdo"}},
+                    {"label": "B307", "glosario": {"piso": "3", "posicion": "Oeste", "lado": "Derecho"}},
+                    {"label": "B308", "glosario": {"piso": "3", "posicion": "Centro", "lado": "Izquierdo"}}
+                ]
+            },
+            {
+                "label": "Piso 4",
+                "expanded": False,
+                "children": [
+                    {"label": "B401", "glosario": {"piso": "4", "posicion": "Norte", "lado": "Derecho"}},
+                    {"label": "B402", "glosario": {"piso": "4", "posicion": "Sur", "lado": "Izquierdo"}},
+                    {"label": "B403", "glosario": {"piso": "4", "posicion": "Sur", "lado": "Derecho"}},
+                    {"label": "B404", "glosario": {"piso": "4", "posicion": "Este", "lado": "Izquierdo"}},
+                    {"label": "B405", "glosario": {"piso": "4", "posicion": "Este", "lado": "Derecho"}},
+                    {"label": "B406", "glosario": {"piso": "4", "posicion": "Oeste", "lado": "Izquierdo"}},
+                    {"label": "Oficina de Investigacion", "glosario": {"piso": "4", "posicion": "Oeste", "lado": "Derecho"}},
+                    {"label": "Taller de Arquitectura y dibujo 5", "glosario": {"piso": "4", "posicion": "Centro", "lado": "Izquierdo"}},
+                    {"label": "Laboratorio de analisis industrial", "glosario": {"piso": "4", "posicion": "Centro", "lado": "Izquierdo"}},
+                ]
+            }
+        ]
+    },
+    "PABELLÓN C",  
+    "LOSA DEPORTIVA",    # Botón simple
+    "AUDITORIO",       # Botón simple
+    "BIBLIOTECA",      # Botón simple
+    "ESTACIONAMIENTO"
+]
 
 def init():
     glClearColor(0.5, 0.7, 0.9, 1.0)  # Fondo azul claro
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_BLEND)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)  
+
 
 def draw_terreno_edificios():
     # Dibujar suelo (el terreno de la universidad) con un hueco en el centro
@@ -1003,7 +1119,7 @@ def draw_scene():
         glVertex3f(-15.0, 5.7, -30.0)  # Segundo punto intermedio
         glVertex3f(*pabellon_a)
         glEnd()
-
+        
         glColor3f(1.0, 1.0, 0.0)  # Cambia el color a otro (por ejemplo, cian)
         glBegin(GL_LINES)
         glVertex3f(-25.0, 5.7, -30.0)  # z = rectitud
@@ -1018,6 +1134,24 @@ def draw_scene():
         glVertex3f(60.0, 5.7, -15.0)
         glVertex3f(*losa_deportiva)
         glEnd()
+    
+    
+    if linea4:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(20.0, 5.5, -15.0)  # Primer punto intermedio
+        glVertex3f(20.0, 5.7, -30.0)  # Segundo punto intermedio
+        glVertex3f(*pabellon_b)
+        glEnd()
+        
+        glColor3f(1.0, 1.0, 0.0)  # Cambia el color a otro (por ejemplo, cian)
+        glBegin(GL_LINES)
+        glVertex3f(30.0, 5.7, -30.0)  # z = rectitud
+        glVertex3f(20.0, 5.7, -30.0)  # z = rectitud
+        glEnd()
+
 
     glutSwapBuffers()
 
@@ -1045,16 +1179,7 @@ def reshape(width, height):
     glMatrixMode(GL_MODELVIEW)
 
 def keyboard(key, x, y):
-    global camera_distance, camera_angle_x, camera_angle_y,linea2, linea3
-    
-    if key == b'1':  # Comprobar si se presiona el número '2' (amarillo)
-        linea2 = not linea2  # Alternar la visibilidad de la línea amarilla
-        glutPostRedisplay()  # Solicitar redibujar la escena
-
-    if key == b'3':
-        linea3 = not linea3
-        glutPostRedisplay
-
+    global camera_distance, camera_angle_x, camera_angle_y
     if key == b'w':
         camera_distance -= 1  # Mover hacia adelante
     elif key == b's':
@@ -1070,7 +1195,8 @@ def keyboard(key, x, y):
     glutPostRedisplay()
     
 def draw_menu_window():
-    """Dibuja el contenido de la ventana del menú."""
+    global button_areas
+    button_areas = []  # Reinicia las áreas clicables
     glClear(GL_COLOR_BUFFER_BIT)
 
     # Fondo del menú
@@ -1083,22 +1209,148 @@ def draw_menu_window():
     glEnd()
 
     # Título del menú
-    glColor3f(1, 1, 1)
+    glColor3f(1, 1, 1)  # Texto blanco
     glRasterPos2f(10, 470)
-    for char in "MENU (Presionar la tecla numerica correspondiente)":
+    for char in "MENU (Haga clic en un botón)":
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ord(char))
 
-    # Dibujar botones
+    # Dibujar botones jerárquicos
     button_height = 40
-    for i, item in enumerate(menu_items):
-        y_position = 420 - i * (button_height + 10)
-        draw_button(10, y_position, 290, y_position + button_height, item)
+    y_position = 420 + scroll_offset  # Ajusta la posición inicial con el desplazamiento
+    for item in menu_items:
+        if isinstance(item, dict):  # Elemento con submenú
+            # Dibujar botón del nivel principal
+            draw_button(10, y_position, 290, y_position + button_height, item["label"])
+            button_areas.append((10, y_position, 290, y_position + button_height, item))
+            y_position -= button_height + 10
 
+            # Si el submenú está expandido, dibujar elementos secundarios
+            if item["expanded"]:
+                for child in item["children"]:
+                    draw_button(30, y_position, 270, y_position + button_height, child["label"])
+                    button_areas.append((30, y_position, 270, y_position + button_height, child))
+                    y_position -= button_height + 10
+
+                    # Si el piso está expandido, dibujar aulas
+                    if "expanded" in child and child["expanded"]:
+                        for subchild in child["children"]:
+                            draw_button(50, y_position, 250, y_position + button_height, subchild["label"])
+                            button_areas.append((50, y_position, 250, y_position + button_height, subchild))
+                            y_position -= button_height + 10
+        else:  # Elemento simple (como "LOSA DEPORTIVA")
+            draw_button(10, y_position, 290, y_position + button_height, item)
+            button_areas.append((10, y_position, 290, y_position + button_height, item))  # Registra el área clicable
+            y_position -= button_height + 10
+
+    # Redibujar el menú
     glutSwapBuffers()
 
+def menu_mouse_handler(button, state, x, y):
+    global scroll_offset
+    if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
+        window_height = glutGet(GLUT_WINDOW_HEIGHT)
+        y = window_height - y  # Ajustar coordenadas del mouse
+        for x1, y1, x2, y2, item in button_areas:
+            if x1 <= x <= x2 and y1 <= y <= y2:
+                global glosario_window, linea2, linea3, linea4
+
+                # Si es un elemento con submenú (Pabellones A y B)
+                if isinstance(item, dict) and "expanded" in item:
+                    item["expanded"] = not item["expanded"]  # Alternar estado de expansión
+                    print(f"{'Expandiendo' if item['expanded'] else 'Colapsando'}: {item['label']}")
+
+                    # Activar/desactivar líneas según el submenú
+                    if item["label"] == "PABELLÓN A":
+                        linea2 = item["expanded"]  # Activa/desactiva la línea 2
+                        print(f"Línea 2 {'activada' if linea2 else 'desactivada'}.")
+
+                    elif item["label"] == "PABELLÓN B":
+                        linea4 = item["expanded"]  # Activa/desactiva la línea 4
+                        print(f"Línea 4 {'activada' if linea4 else 'desactivada'}.")
+
+                # Si es un botón simple (LOSA DEPORTIVA)
+                elif item == "LOSA DEPORTIVA":
+                    linea3 = not linea3  # Alterna la línea 3
+                    print(f"Línea 3 {'activada' if linea3 else 'desactivada'}.")
+
+                # Si es un aula específica
+                elif isinstance(item, dict) and "glosario" in item:
+                    print(f"Mostrando glosario para {item['label']}.")
+                    mostrar_glosario(item["label"], item["glosario"])
+
+                # Redibujar la ventana del menú
+                glutSetWindow(menu_window)
+                glutPostRedisplay()
+
+                # Forzar redibujado de la escena principal
+                glutSetWindow(main_window)
+                glutPostRedisplay()
+                break
+
+    # Si se usa la rueda del mouse para desplazar
+    elif button == 3:  # Rueda del mouse hacia arriba (desplazar hacia arriba)
+        scroll_offset += 10
+        glutPostRedisplay()  # Forzar redibujado del menú
+    elif button == 4:  # Rueda del mouse hacia abajo (desplazar hacia abajo)
+        scroll_offset -= 10
+        glutPostRedisplay()  # Forzar redibujado del menú
+
+def mostrar_glosario(aula, glosario):
+    global glosario_window
+
+    def draw_glosario():
+        """Función para dibujar el contenido del glosario."""
+        glClear(GL_COLOR_BUFFER_BIT)
+        glColor3f(1, 1, 1)
+
+        # Título del glosario
+        glRasterPos2f(10, 150)
+        for char in f"Glosario del aula {aula}:":  # Mostrar el nombre del aula
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ord(char))
+
+        # Mostrar detalles del aula
+        glRasterPos2f(10, 120)
+        for char in f"Piso: {glosario.get('piso', 'No especificado')}":
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, ord(char))
+
+        glRasterPos2f(10, 100)
+        for char in f"Posición: {glosario.get('posicion', 'No especificado')}":
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, ord(char))
+
+        glRasterPos2f(10, 80)
+        for char in f"Lado: {glosario.get('lado', 'No especificado')}":
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, ord(char))
+
+        glutSwapBuffers()
+
+    try:
+        if glosario_window is None:
+            # Crear la ventana si no existe
+            glutInitWindowSize(300, 200)
+            glutInitWindowPosition(200, 200)
+            glosario_window = glutCreateWindow(f"Glosario de {aula}")
+
+            # Configuración de proyección ortográfica
+            glClearColor(0, 0, 0, 1)  # Fondo negro
+            glMatrixMode(GL_PROJECTION)
+            glLoadIdentity()
+            gluOrtho2D(0, 300, 0, 200)
+            glMatrixMode(GL_MODELVIEW)
+
+            # Configurar función de redibujado
+            glutDisplayFunc(draw_glosario)
+        else:
+            # Actualizar el contenido si ya existe
+            glutSetWindow(glosario_window)
+            glutSetWindowTitle(f"Glosario de {aula}")
+            glutDisplayFunc(draw_glosario)
+            glutPostRedisplay()
+    except Exception as e:
+        print(f"Error al mostrar glosario: {e}")
+
+
 def draw_button(x1, y1, x2, y2, text):
-    """Dibuja un botón en la ventana del menú."""
-    glColor3f(0.3, 0.3, 0.3)  # Fondo del botón
+    glColor3f(0.3, 0.3, 0.3)
     glBegin(GL_QUADS)
     glVertex2f(x1, y1)
     glVertex2f(x2, y1)
@@ -1106,7 +1358,6 @@ def draw_button(x1, y1, x2, y2, text):
     glVertex2f(x1, y2)
     glEnd()
 
-    # Borde del botón
     glColor3f(1, 1, 1)
     glBegin(GL_LINE_LOOP)
     glVertex2f(x1, y1)
@@ -1115,20 +1366,28 @@ def draw_button(x1, y1, x2, y2, text):
     glVertex2f(x1, y2)
     glEnd()
 
-    # Texto del botón
     glRasterPos2f(x1 + 10, y1 + 15)
     for char in text:
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, ord(char))
 
+
 def open_menu_window():
-    """Crea la ventana del menú."""
+    """Abre o redibuja el menú interactivo."""
     global menu_window
-    glutInitWindowSize(300, 500)
-    glutInitWindowPosition(100, 100)
-    menu_window = glutCreateWindow("Menú Interactivo")
-    glutDisplayFunc(draw_menu_window)
-    glClearColor(0.2, 0.2, 0.2, 1.0)  # Fondo gris oscuro
-    glOrtho(0, 300, 0, 500, -1, 1)
+    if menu_window is None:
+        # Crear ventana
+        glutInitWindowSize(300, 500)
+        glutInitWindowPosition(100, 100)
+        menu_window = glutCreateWindow("Menú Interactivo")
+        glClearColor(0.2, 0.2, 0.2, 1.0)  # Configura el color de fondo
+        glOrtho(0, 300, 0, 500, -1, 1)  # Establece la proyección ortográfica
+        glutDisplayFunc(draw_menu_window)  # Establece la función que se llama para dibujar el menú
+        glutMouseFunc(menu_mouse_handler)  # Configura la función para manejar clics del mouse
+    else:
+        # Si la ventana ya está creada, solo redibuja
+        glutSetWindow(menu_window)
+        glutPostRedisplay()
+
 
 def keyboard_with_menu(key, x, y):
     """Control del teclado, incluyendo la apertura del menú."""
@@ -1153,8 +1412,6 @@ def main():
     glutMotionFunc(mouse_motion)
     glutKeyboardFunc(keyboard_with_menu)  # Función de teclado extendida
     glutMainLoop()
-
-
 
 if __name__ == "__main__":
     main()
