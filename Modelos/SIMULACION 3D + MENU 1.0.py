@@ -17,17 +17,42 @@ mouse_x, mouse_y = 0, 0  # Posición inicial del mouse
 mouse_left_down = False    
 glosario_window = None
 scroll_offset = 0  # Posición del scroll (mueve los botones hacia arriba o abajo)
+button_areas = []  # Coordenadas de los botones
 
 pabellon_a = (-15.0, 5.5, -15.0)
 losa_deportiva = (65.50, 2.7, -53.5)
 puerta_upn = (-85.0, 7.5, -15.0)
 pabellon_b = (20.0, 5.5, -15)
+area_administrativa = (-34.9, 5.5, -15.0)
+area_verde = (7.0, 5.5, -15.0)
+cafetin = (25.0, 5.5, -15.0)
+biblioteca = (38.0, 5.5, -15.0)
+auditorio = (40.0, 3.0, -15.0)
+
+
+t = 0.0  # Progreso inicial de la animación
+delta_t = 0.002  # Incremento por cada frame
+animacion = False
 
 # Variables globales para mostrar/ocultar las líneas
 linea2 = False  # Línea entre Edificio 1 y Edificio 2 (amarillo)
 linea3 = False
 linea4 = False
-button_areas = []  # Coordenadas de los botones
+linea5 = False
+linea6 = False
+linea7 = False
+linea8 = False
+linea9 = False
+# Progreso y animación por cada camino
+animaciones = {
+    "area_administrativa": {"t": 0.0, "animando": False},
+    "pabellon_a": {"t": 0.0, "animando": False},
+    "area_verde": {"t": 0.0, "animando": False},
+    "cafetin": {"t": 0.0, "animando": False},
+    "pabellon_b": {"t": 0.0, "animando": False},
+    "biblioteca": {"t": 0.0, "animando": False},
+    "losa_deportiva": {"t": 0.0, "animando": False},
+}
 
 # Variables globales
 main_window = None
@@ -140,11 +165,13 @@ menu_items = [
             }
         ]
     },
-    "PABELLÓN C",  
+    "PABELLÓN C",
+    "AREA ADMINISTRATIVA",
+    "AREA VERDE",
+    "CAFETIN",
     "LOSA DEPORTIVA",    # Botón simple
     "AUDITORIO",       # Botón simple
     "BIBLIOTECA",      # Botón simple
-    "ESTACIONAMIENTO"
 ]
 
 def init():
@@ -152,7 +179,34 @@ def init():
     glEnable(GL_DEPTH_TEST)
     glEnable(GL_BLEND)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)  
+#Animacion
+def start_animation(camino):
+    global animaciones
+    animaciones[camino]["t"] = 0.0
+    animaciones[camino]["animando"] = True
 
+def update_animation():
+    global animaciones, delta_t
+    for camino, estado in animaciones.items():
+        if estado["animando"]:
+            estado["t"] += delta_t
+            if estado["t"] >= 1.0:
+                estado["t"] = 1.0
+                estado["animando"] = False  # Detén la animación al completarse
+
+
+def draw_animated_line(color, start, end, progress):
+    glColor3f(*color)
+    glBegin(GL_LINES)
+    glVertex3f(*start)
+    interpolated = (
+        start[0] + progress * (end[0] - start[0]),
+        start[1] + progress * (end[1] - start[1]),
+        start[2] + progress * (end[2] - start[2]),
+    )
+    glVertex3f(*interpolated)
+    glEnd()
+#termina animacion
 
 def draw_terreno_edificios():
     # Dibujar suelo (el terreno de la universidad) con un hueco en el centro
@@ -795,6 +849,42 @@ def draw_piso_general(position, scale):
     glEnd()
     glPopMatrix()
 
+def draw_aparcamiento_area():
+    # Dibujar primera sección de líneas de aparcamiento
+    glColor3f(1.0, 1.0, 1.0)  # Color blanco para las líneas de aparcamiento
+    line_spacing = 10.0  # Espacio entre líneas de aparcamiento
+    line_length = 13.0  # Longitud de cada línea, ajustada al ancho del aparcamiento
+    for i in range(-9, 10):  # Ajusta el rango para cubrir el ancho del aparcamiento
+        glPushMatrix()
+        glTranslatef(i * line_spacing, 2.5, 4.0)  # Mueve las líneas junto con el suelo del aparcamiento
+        glBegin(GL_LINES)
+        glVertex3f(0.0, 0.0, -line_length / 2)  # Ajusta el tamaño para que cubra todo el suelo
+        glVertex3f(0.0, 0.0, line_length / 2)
+        glEnd()
+        glPopMatrix()
+
+    # Dibujar segunda sección de líneas de aparcamiento
+    offset_1 = 30.0  # Ajusta este valor para mover las líneas a la derecha o izquierda
+    for i in range(0, 6):  # Ajusta el rango para cubrir el ancho del aparcamiento
+        glPushMatrix()
+        glTranslatef(i * line_spacing + offset_1, 2.5, 32.0)  # Añade el offset para mover las líneas
+        glBegin(GL_LINES)
+        glVertex3f(0.0, 0.0, -line_length / 2)  # Ajusta el tamaño para que cubra todo el suelo
+        glVertex3f(0.0, 0.0, line_length / 2)
+        glEnd()
+        glPopMatrix()
+
+    # Dibujar tercera sección de líneas de aparcamiento
+    offset_2 = -80.0  # Ajusta este valor para mover las líneas al lado de la primera sección
+    for i in range(0, 6):  # Ajusta el rango para cubrir el ancho del aparcamiento
+        glPushMatrix()
+        glTranslatef(i * line_spacing + offset_2, 2.5, 32.0)  # Añade el offset para la nueva sección
+        glBegin(GL_LINES)
+        glVertex3f(0.0, 0.0, -line_length / 2)  # Ajusta el tamaño para que cubra todo el suelo
+        glVertex3f(0.0, 0.0, line_length / 2)
+        glEnd()
+        glPopMatrix()
+
 def draw_postes_fachada():
     glColor3f(0.0, 0.0, 0.0)  # Color de los postes
     # Listas de posiciones y escalas para los postes
@@ -851,6 +941,22 @@ def draw_escaleras_fachada():
         glutSolidCube(1) 
         glPopMatrix()
 
+def draw_auditorio():
+    glColor3f(0.5, 0.5, 0.5)  # Color del bloque (gris neutro)
+    # Cuerpo del bloque
+    glPushMatrix()
+    glScalef(30.0, 18.0, 18.0)  # Tamaño del bloque
+    glutSolidCube(1)
+    glPopMatrix()
+
+    # Puerta negra en el frente
+    glColor3f(0.6, 0.4, 0.2)  # Color de la puerta (negro)
+    glPushMatrix()
+    glTranslatef(0.0, -1.0, 9.1)  # Posicionar la puerta (un poco más atrás junto con el bloque)
+    glScalef(20.0, 7.5, 0.5)  # Tamaño de la puerta
+    glutSolidCube(1)
+    glPopMatrix()
+
 # ------------------------------------------------------DIBUJADO DE ESCENA-------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------------------------
 def draw_scene():
@@ -866,6 +972,7 @@ def draw_scene():
     draw_paredes_fachada()  # Dibuja las paredes
     draw_postes_fachada()
     draw_escaleras_fachada()
+    draw_aparcamiento_area()
 
     draw_block_fachada((-90, 9.5, -40.0), (0.5, 6.0, 30.0))
     draw_block_fachada((-90.0, 9.5, 20.0), (0.5, 6.0, 40.0))
@@ -987,6 +1094,11 @@ def draw_scene():
     glRotatef( 270, 0.0, 1.0, 0.0) # La hace girar sobre su mismo eje
     draw_building()
     glPopMatrix()
+
+    glPushMatrix()
+    glTranslatef(-60.0, 5.0, -55.0)  # Posición del bloque pequeño
+    draw_auditorio()
+    glPopMatrix()
     # ------------------------ PABELLONES------------------------
 
     
@@ -1107,23 +1219,24 @@ def draw_scene():
     glPopMatrix()
     # Fin de loza deportiva 
     
-    # Dibujar las líneas si están habilitadas
-    
-
+    # Dibujar las líneas si están habilitada
     if linea2:
-        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
         glColor3f(1.0, 1.0, 0.0)
         glBegin(GL_LINES)
         glVertex3f(*puerta_upn)
         glVertex3f(-15.0, 5.5, -15.0)  # Primer punto intermedio
-        glVertex3f(-15.0, 5.7, -30.0)  # Segundo punto intermedio
-        glVertex3f(*pabellon_a)
         glEnd()
-        
-        glColor3f(1.0, 1.0, 0.0)  # Cambia el color a otro (por ejemplo, cian)
+
+        glColor3f(1.0, 1.0, 0.0)
         glBegin(GL_LINES)
         glVertex3f(-25.0, 5.7, -30.0)  # z = rectitud
         glVertex3f(-15.0, 5.7, -30.0)  # z = rectitud
+        glEnd()
+
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(-15.0, 5.7, -30.0)  # z = rectitud
+        glVertex3f(-15.0, 5.5, -15.0)  # z = rectitud
         glEnd()
 
     if linea3:
@@ -1152,7 +1265,77 @@ def draw_scene():
         glVertex3f(20.0, 5.7, -30.0)  # z = rectitud
         glEnd()
 
+    if linea5:
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(-34.9, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(-35.0, 5.7, -50.0)  # z = rectitud
+        glVertex3f(-35.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
 
+    if linea6:
+        glColor3f(0.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(7.0, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(0.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(7.0, 5.7, -39.0)  # z = rectitud
+        glVertex3f(7.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+    if linea7:
+         # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(25.0, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(25.0, 5.7, -39.0)  # z = rectitud
+        glVertex3f(25.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+
+        glColor3f(1.0, 1.0, 0.0)
+        glBegin(GL_LINES)
+        glVertex3f(35.0, 5.7, -39.0)  # z = rectitud/+derecha
+        glVertex3f(25.0, 5.7, -39.0)  # z = rectitud/+derecha
+        glEnd()
+    if linea8:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(38.0, 5.5, -15.0)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(38.0, 5.7, -39.0)  # z = rectitud
+        glVertex3f(38.0, 5.5, -15.0)  # z = rectitud
+        glEnd()
+    if linea9:
+        # Camino entre Edificio 1 y Edificio 2 (amarillo, línea recta)
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(*puerta_upn)
+        glVertex3f(-58.7, 5.0, -20.8)  # Primer punto intermedio
+        glEnd()
+
+        glColor3f(0.0, 1.0, 1.0)
+        glBegin(GL_LINES)
+        glVertex3f(-58.7, 5.0, -20.8)  # z = rectitud
+        glVertex3f(-58.7, 5.0, -47.8)  # z = rectitud
+        glEnd()
+
+    update_animation()
     glutSwapBuffers()
 
 def mouse_motion(x, y):
@@ -1250,30 +1433,51 @@ def menu_mouse_handler(button, state, x, y):
     if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
         window_height = glutGet(GLUT_WINDOW_HEIGHT)
         y = window_height - y  # Ajustar coordenadas del mouse
+
         for x1, y1, x2, y2, item in button_areas:
             if x1 <= x <= x2 and y1 <= y <= y2:
-                global glosario_window, linea2, linea3, linea4
+                global glosario_window, linea2, linea3, linea4, linea5, linea6, linea7, linea8, linea9
 
                 # Si es un elemento con submenú (Pabellones A y B)
                 if isinstance(item, dict) and "expanded" in item:
                     item["expanded"] = not item["expanded"]  # Alternar estado de expansión
                     print(f"{'Expandiendo' if item['expanded'] else 'Colapsando'}: {item['label']}")
 
-                    # Activar/desactivar líneas según el submenú
+                    # Activar animación progresiva para "PABELLÓN A"
                     if item["label"] == "PABELLÓN A":
-                        linea2 = item["expanded"]  # Activa/desactiva la línea 2
-                        print(f"Línea 2 {'activada' if linea2 else 'desactivada'}.")
-
+                        linea2 = item["expanded"]
+                        print(f" linea 2 {'activado' if linea2 else 'desactivado'}.")
+                        
+                    # Activar/desactivar la línea 4 para "PABELLÓN B"
                     elif item["label"] == "PABELLÓN B":
                         linea4 = item["expanded"]  # Activa/desactiva la línea 4
                         print(f"Línea 4 {'activada' if linea4 else 'desactivada'}.")
 
-                # Si es un botón simple (LOSA DEPORTIVA)
+                # Si es un botón simple (como "LOSA DEPORTIVA")
                 elif item == "LOSA DEPORTIVA":
                     linea3 = not linea3  # Alterna la línea 3
                     print(f"Línea 3 {'activada' if linea3 else 'desactivada'}.")
+                
+                elif item == "AREA ADMINISTRATIVA":
+                    linea5 = not linea5 
+                    print(f"Línea 5 {'activada' if linea5 else 'desactivada'}.")
 
-                # Si es un aula específica
+                elif item == "AREA VERDE":
+                    linea6 = not linea6 
+                    print(f"Línea 6 {'activada' if linea6 else 'desactivada'}.")
+                
+                elif item == "CAFETIN":
+                    linea7 = not linea7 
+                    print(f"Línea 7 {'activada' if linea7 else 'desactivada'}.")
+
+                elif item == "BIBLIOTECA":
+                    linea8 = not linea8 
+                    print(f"Línea 8 {'activada' if linea8 else 'desactivada'}.")
+                
+                elif item == "AUDITORIO":
+                    linea9 = not linea9
+                    print(f"Línea 9 {'activada' if linea9 else 'desactivada'}.")
+                # Si es un aula específica (mostrar glosario)
                 elif isinstance(item, dict) and "glosario" in item:
                     print(f"Mostrando glosario para {item['label']}.")
                     mostrar_glosario(item["label"], item["glosario"])
@@ -1294,6 +1498,7 @@ def menu_mouse_handler(button, state, x, y):
     elif button == 4:  # Rueda del mouse hacia abajo (desplazar hacia abajo)
         scroll_offset -= 10
         glutPostRedisplay()  # Forzar redibujado del menú
+
 
 def mostrar_glosario(aula, glosario):
     global glosario_window
